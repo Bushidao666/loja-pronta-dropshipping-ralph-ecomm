@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, Check, Globe, BarChart3, HeadphonesIcon } from 'lucide-react';
+import { X, Globe, BarChart3, HeadphonesIcon } from 'lucide-react';
 
 export default function Etapa5Page() {
   const [activeSlideNao, setActiveSlideNao] = useState(0);

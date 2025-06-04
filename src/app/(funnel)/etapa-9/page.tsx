@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Store, BookOpen, HeadphonesIcon, AlertTriangle } from 'lucide-react';
+import { Store, BookOpen, HeadphonesIcon } from 'lucide-react';
 
 export default function Etapa9Page() {
   const marketProblems = [

@@ -98,7 +98,7 @@ export default function Etapa6() {
                     </div>
                     <div className="flex items-center justify-center flex-grow my-2">
                       <p className="text-sm sm:text-base text-white text-center">
-                        Não é "invista R$100, receba R$300". Exige testes e otimização constante.
+                        Não é &quot;invista R$100, receba R$300&quot;. Exige testes e otimização constante.
                       </p>
                     </div>
                   </div>

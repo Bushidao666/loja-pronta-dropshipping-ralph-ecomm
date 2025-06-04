@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Globe, DollarSign, ArrowUpRight } from 'lucide-react';
+import { Globe, DollarSign, ArrowUpRight } from 'lucide-react';
 
 export default function Etapa11Page() {
   const achievementItems = [

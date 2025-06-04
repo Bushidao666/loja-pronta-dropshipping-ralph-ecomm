@@ -43,7 +43,7 @@ export default function Etapa1() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <div className="bg-black/30 py-2 px-3 rounded-lg border-l-4 border-green-500">
                 <p className="text-sm sm:text-base font-medium text-white">
-                  <span className="bg-white/10 px-1 py-0.5 rounded mr-1">•</span> Comprou cursos prometendo "ganhos em dólar"
+                  <span className="bg-white/10 px-1 py-0.5 rounded mr-1">•</span> Comprou cursos prometendo &quot;ganhos em dólar&quot;
                 </p>
               </div>
               <div className="bg-black/30 py-2 px-3 rounded-lg border-l-4 border-green-500">
@@ -53,7 +53,7 @@ export default function Etapa1() {
               </div>
               <div className="bg-black/30 py-2 px-3 rounded-lg border-l-4 border-green-500">
                 <p className="text-sm sm:text-base font-medium text-white">
-                  <span className="bg-white/10 px-1 py-0.5 rounded mr-1">•</span> Escolheu produtos que "pareciam" populares lá fora
+                  <span className="bg-white/10 px-1 py-0.5 rounded mr-1">•</span> Escolheu produtos que &quot;pareciam&quot; populares lá fora
                 </p>
               </div>
               <div className="bg-black/30 py-2 px-3 rounded-lg border-l-4 border-green-500">

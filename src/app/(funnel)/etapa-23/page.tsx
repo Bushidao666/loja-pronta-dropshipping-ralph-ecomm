@@ -87,7 +87,7 @@ export default function Etapa23Page() {
               className="bg-gradient-to-r from-red-500/20 to-orange-400/20 py-4 sm:py-5 md:py-6 px-4 sm:px-5 md:px-6 rounded-xl border-l-4 border-red-400 shadow-xl flex-shrink-0"
             >
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white text-center font-medium leading-relaxed">
-                Vi centenas dizerem <span className="text-red-400 font-bold">"começo mês que vem"</span> e nunca começaram. 
+                Vi centenas dizerem <span className="text-red-400 font-bold">&quot;começo mês que vem&quot;</span> e nunca começaram. 
                 Os que <span className="text-green-400 font-bold">agiram imediatamente</span> são os que hoje me mandam fotos de suas conquistas.
               </p>
             </motion.div>

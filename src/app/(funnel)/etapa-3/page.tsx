@@ -61,7 +61,7 @@ export default function Etapa3Page() {
                     <PieChart className="h-8 w-8 text-green-400 mb-2" />
                     <p className="font-bold text-green-400 text-lg mb-2">Validação ineficiente</p>
                     <p className="text-white text-sm">
-                      Escolher produtos baseado em "achismos" é queimar dinheiro
+                      Escolher produtos baseado em &quot;achismos&quot; é queimar dinheiro
                     </p>
                   </div>
                   
