@@ -228,53 +228,53 @@ function StickyFooter() {
   const getButtonText = () => {
     switch(currentStep) {
       case 1:
-        return "QUERO SABER A DIFERENÇA →";
+        return "DESCOBRIR A SOLUÇÃO →";
       case 2:
-        return "PARA DE SER TEORIA, QUERO PRÁTICA →";
+        return "ENTENDER O MÉTODO →";
       case 3:
-        return "QUERO SUPERAR ESSE MEDO →";
+        return "SUPERAR ESSES DESAFIOS →";
       case 4:
-        return "CHEGA DE MEDO, QUERO AGIR →";
+        return "QUERO UM NEGÓCIO REAL →";
       case 5:
-        return "QUERO PARAR DE FICAR PARA TRÁS →";
+        return "CONHECER A FÓRMULA →";
       case 6:
-        return "CHEGA, QUERO SAIR DO LUGAR →";
+        return "SOLUÇÃO PARA ESSES DESAFIOS →";
       case 7:
-        return "CANSEI DESSE CICLO →";
+        return "CONHECER O ATALHO →";
       case 8:
-        return "SIM, CANSEI DESSA ANGÚSTIA →";
+        return "IMPLEMENTAR ESSE SISTEMA →";
       case 9:
-        return "QUERO ESSA REALIDADE →";
+        return "CONHECER A SOLUÇÃO COMPLETA →";
       case 10:
-        return "QUERO ESSA LIBERDADE →";
+        return "VER OS DETALHES →";
       case 11:
-        return "QUERO ESSA SENSAÇÃO →";
+        return "APRENDER COM QUEM JÁ CHEGOU LÁ →";
       case 12:
-        return "PARA DE ENROLAR →";
+        return "QUERO ESSA FUNDAÇÃO →";
       case 13:
-        return "QUERO COMEÇAR DE VERDADE →";
+        return "ACESSAR ESSE CONHECIMENTO →";
       case 14:
-        return "ACEITO, E AGORA? →";
+        return "QUERO ESSE SUPORTE →";
       case 15:
-        return "QUERO PULAR A CURVA DE APRENDIZADO →";
+        return "QUERO RESULTADOS REAIS →";
       case 16:
-        return "QUERO VER OS CENÁRIOS →";
+        return "QUERO O SISTEMA COMPLETO →";
       case 17:
-        return "NÃO QUERO ESSE CENÁRIO →";
+        return "INVESTIMENTO INTELIGENTE →";
       case 18:
-        return "ESCOLHO CENÁRIO 2 →";
+        return "SOU DO PERFIL IDEAL →";
       case 19:
-        return "VALE A PENA O RISCO →";
+        return "QUERO FATURAR EM MOEDA FORTE →";
       case 20:
-        return "SOU DO TIPO QUE AGE →";
+        return "QUERO ESSA EQUIPE GLOBAL COMIGO →";
       case 21:
-        return "NÃO QUERO ME ARREPENDER →";
+        return "INVESTIR COM GARANTIA →";
       case 22:
-        return "NÃO QUERO ESSA DOR →";
+        return "MINHAS DÚVIDAS FORAM RESOLVIDAS →";
       case 23:
-        return "QUERO A OPÇÃO 2 →";
+        return "QUERO COMEÇAR AGORA →";
       case 24:
-        return "QUERO MINHA LOJA POR R$97 →";
+        return "COMEÇAR A VENDER NA GRINGA - R$97 →";
       default:
         return "PRÓXIMO →";
     }

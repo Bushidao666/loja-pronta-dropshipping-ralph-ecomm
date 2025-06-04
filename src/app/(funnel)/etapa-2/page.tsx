@@ -1,20 +1,33 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Server, CheckCircle2, BookOpen } from 'lucide-react';
 
 export default function Etapa2() {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const totalSlides = 3;
+  
+  // Autoplay effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % totalSlides);
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex-1 flex flex-col justify-center items-center px-4">
-        <div className="w-full max-w-4xl space-y-6">
+        <div className="w-full max-w-4xl space-y-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center leading-tight">
-              A Diferença Brutal Entre <span className="text-green-400">Você E Quem Vende</span>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center leading-tight">
+              Em 7 anos vendendo para <span className="text-green-400">93 países</span> e faturando em dólar e euro, identifiquei o que realmente importa:
             </h1>
           </motion.div>
 
@@ -22,40 +35,61 @@ export default function Etapa2() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-5"
+            className="space-y-4"
           >
-            <p className="text-xl sm:text-2xl font-bold text-green-400 text-center">
-              Eles pararam de &ldquo;se preparar&rdquo; e começaram.
-            </p>
+            {/* Carrossel com autoplay */}
+            <div className="relative">
+              <div className="overflow-hidden pb-2">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out" 
+                  style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+                >
+                  {/* Pilar 1 */}
+                  <div className="bg-black/30 rounded-lg border-l-4 border-green-500 p-4 w-full flex-shrink-0 flex flex-col items-center text-center">
+                    <Server className="h-8 w-8 text-green-400 mb-2" />
+                    <p className="font-bold text-green-400 text-base mb-1">Infraestrutura técnica</p>
+                    <p className="text-white text-sm">
+                      que converte compradores estrangeiros
+                    </p>
+                  </div>
 
-            <div className="flex flex-col space-y-4">
-              <div className="flex items-start">
-                <div className="w-1.5 self-stretch bg-green-500 mr-4 rounded-full min-h-[60px]"></div>
-                <div className="flex-1">
-                  <p className="text-base text-white/70 mb-2">Enquanto você pesquisa o &ldquo;método perfeito&rdquo;...</p>
-                  <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
-                    <p className="text-lg sm:text-xl font-medium text-white">
-                      <span className="bg-white/10 px-2 py-1 rounded">Eles estão recebendo notificação de venda no celular.</span>
+                  {/* Pilar 2 */}
+                  <div className="bg-black/30 rounded-lg border-l-4 border-green-500 p-4 w-full flex-shrink-0 flex flex-col items-center text-center">
+                    <CheckCircle2 className="h-8 w-8 text-green-400 mb-2" />
+                    <p className="font-bold text-green-400 text-base mb-1">Validação estratégica</p>
+                    <p className="text-white text-sm">
+                      de produtos com apelo global
+                    </p>
+                  </div>
+
+                  {/* Pilar 3 */}
+                  <div className="bg-black/30 rounded-lg border-l-4 border-green-500 p-4 w-full flex-shrink-0 flex flex-col items-center text-center">
+                    <BookOpen className="h-8 w-8 text-green-400 mb-2" />
+                    <p className="font-bold text-green-400 text-base mb-1">Conhecimento prático</p>
+                    <p className="text-white text-sm">
+                      de operação internacional e escalabilidade
                     </p>
                   </div>
                 </div>
               </div>
               
-              <div className="flex items-start">
-                <div className="w-1.5 self-stretch bg-green-500 mr-4 rounded-full min-h-[60px]"></div>
-                <div className="flex-1">
-                  <p className="text-base text-white/70 mb-2">Enquanto você &ldquo;estuda&rdquo; dropshipping...</p>
-                  <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
-                    <p className="text-lg sm:text-xl font-medium text-white">
-                      <span className="bg-white/10 px-2 py-1 rounded">Eles estão contando o dinheiro que ganhou hoje.</span>
-                    </p>
-                  </div>
-                </div>
+              {/* Dots de navegação */}
+              <div className="flex justify-center gap-2 mt-2">
+                {Array.from({ length: totalSlides }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveSlide(index)}
+                    className={`h-2 w-2 rounded-full ${
+                      activeSlide === index ? 'bg-green-400' : 'bg-gray-500'
+                    }`}
+                    aria-label={`Slide ${index + 1}`}
+                  />
+                ))}
               </div>
             </div>
 
-            <p className="text-2xl sm:text-3xl font-bold text-white text-center pt-3">
-              Doloroso, né?
+            <p className="text-lg sm:text-xl font-bold text-white text-center pt-1">
+              A maioria dos cursos foca apenas no básico, ignorando o que é <span className="text-green-400">FUNDAMENTAL</span> para conquistar mercados internacionais.
             </p>
           </motion.div>
         </div>

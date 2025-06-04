@@ -1,20 +1,37 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function Etapa13() {
+  const [activeSlide, setActiveSlide] = useState(0);
+  
+  const modules = [
+    "/modules/Modulo-1..webp",
+    "/modules/Modulo-1.1.webp",
+    "/modules/Modulo-1.2.webp",
+    "/modules/Modulo-2.webp",
+    "/modules/Modulo-3.webp",
+    "/modules/Modulo-4.webp",
+    "/modules/Modulo-5.webp",
+    "/modules/Modulo-6.webp"
+  ];
+  
+  const totalSlides = modules.length;
+
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex-1 flex flex-col justify-center items-center px-4">
-        <div className="w-full max-w-4xl space-y-6">
+      <div className="flex-1 flex flex-col justify-center items-center px-2 sm:px-4 py-3">
+        <div className="w-full max-w-7xl h-full flex flex-col justify-center space-y-4 sm:space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="flex-shrink-0"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center leading-tight">
-              As Barreiras <span className="text-green-400">Imaginárias</span> Que Você Criou
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white text-center leading-tight">
+              Academia <span className="text-green-400">Drop360°:</span> Dominando o Mercado Internacional
             </h1>
           </motion.div>
 
@@ -22,35 +39,52 @@ export default function Etapa13() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-5"
+            className="flex-1 flex flex-col justify-center space-y-4 sm:space-y-6"
           >
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-black/30 p-4 rounded-lg border-l-4 border-green-500">
-                <p className="text-lg sm:text-xl text-white">
-                  ✅ Você <span className="font-bold">não precisa</span> ser especialista pra começar
-                </p>
-              </div>
-              <div className="bg-black/30 p-4 rounded-lg border-l-4 border-green-500">
-                <p className="text-lg sm:text-xl text-white">
-                  ✅ Você <span className="font-bold">não precisa</span> de capital alto
-                </p>
-              </div>
-              <div className="bg-black/30 p-4 rounded-lg border-l-4 border-green-500">
-                <p className="text-lg sm:text-xl text-white">
-                  ✅ Você <span className="font-bold">não precisa</span> dominar tudo antes
-                </p>
-              </div>
-              <div className="bg-black/30 p-4 rounded-lg border-l-4 border-green-500">
-                <p className="text-lg sm:text-xl text-white">
-                  ✅ Você só precisa de uma <span className="font-bold text-green-400">loja que FUNCIONA</span>
-                </p>
+            <div className="relative overflow-hidden rounded-xl flex-1 flex items-center">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out w-full h-full" 
+                style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+              >
+                {modules.map((module, index) => (
+                  <div 
+                    key={index} 
+                    className="w-full flex-shrink-0 flex justify-center items-center h-full px-2"
+                  >
+                    <div className="relative w-full max-w-4xl h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[70vh] xl:h-[75vh]">
+                      <Image 
+                        src={module}
+                        alt={`Módulo ${index + 1}`}
+                        fill
+                        className="object-contain rounded-xl drop-shadow-2xl"
+                        priority={index === 0}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-
-            <p className="text-xl sm:text-2xl font-bold text-white text-center pt-4">
-              Pare de usar &ldquo;preparação&rdquo; como <span className="text-red-400">desculpa.</span>
-            </p>
+            
+            {/* Dots de navegação */}
+            <div className="flex justify-center gap-3 flex-shrink-0">
+              {Array.from({ length: totalSlides }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveSlide(index)}
+                  className={`h-4 w-4 rounded-full transition-all duration-300 ${
+                    activeSlide === index ? 'bg-green-400 scale-110' : 'bg-gray-500 hover:bg-gray-400'
+                  }`}
+                  aria-label={`Módulo ${index + 1}`}
+                />
+              ))}
+            </div>
+            
+            {/* Indicador de slide atual */}
+            <div className="text-center flex-shrink-0">
+              <span className="text-base sm:text-lg text-gray-300 font-medium">
+                {activeSlide + 1}/{totalSlides}
+              </span>
+            </div>
           </motion.div>
         </div>
       </div>
