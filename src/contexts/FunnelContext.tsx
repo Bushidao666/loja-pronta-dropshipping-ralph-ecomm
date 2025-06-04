@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useCallback, useRef } from 'react';
 import useFunnelStore, { NicheType, Notification } from '@/store/funnelStore';
 import useNotifications from '@/hooks/useNotifications';
 
@@ -41,7 +41,7 @@ interface FunnelContextType {
 
 const FunnelContext = createContext<FunnelContextType | null>(null);
 
-export function FunnelProvider({ children }: { children: ReactNode }) {
+export function FunnelProvider({ children }: { children: React.ReactNode }) {
   const {
     currentStep,
     totalSteps,
@@ -69,8 +69,21 @@ export function FunnelProvider({ children }: { children: ReactNode }) {
     generateRandomNotification,
   } = useNotifications();
 
-  // Função para gerar uma notificação instantânea
+  // Ref para controlar debounce de notificações
+  const lastNotificationTime = useRef<number>(0);
+  const NOTIFICATION_DEBOUNCE = 1000; // 1 segundo entre notificações
+
+  // Função para gerar uma notificação instantânea com debounce
   const addNewNotification = useCallback(() => {
+    const now = Date.now();
+    
+    // Verificar se passou tempo suficiente desde a última notificação
+    if (now - lastNotificationTime.current < NOTIFICATION_DEBOUNCE) {
+      console.log('Notificação bloqueada por debounce');
+      return;
+    }
+    
+    lastNotificationTime.current = now;
     generateRandomNotification();
   }, [generateRandomNotification]);
 

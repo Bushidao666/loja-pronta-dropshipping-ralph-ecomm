@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import useFunnelStore, { Notification } from '@/store/funnelStore';
+import useFunnelStore from '@/store/funnelStore';
 
 // Dados simulados para as notificações
 const buyerNames = [
@@ -28,20 +28,14 @@ const prices = [59.90, 89.90, 129.90, 79.90, 149.90, 99.90, 199.90];
 const timeAgo = ['há 2 min', 'há 5 min', 'há 1 min', 'há 4 min', 'há 3 min', 'agora mesmo', 'há 6 min'];
 
 interface UseNotificationsOptions {
-  enabled?: boolean;
-  minInterval?: number;
-  maxInterval?: number;
   maxNotifications?: number;
 }
 
 export default function useNotifications({
-  enabled = false, // Iniciar com as notificações desativadas
-  minInterval = 8000, // 8 segundos
-  maxInterval = 12000, // 12 segundos
   maxNotifications = 15,
 }: UseNotificationsOptions = {}) {
   const { notifications, addNotification, removeNotification, clearNotifications, selectedNiche, updateRevenue, updateProfit } = useFunnelStore();
-  const [isPaused, setIsPaused] = useState(true); // Iniciar pausado
+  const [isPaused, setIsPaused] = useState(true); // Sempre pausado
 
   const generateRandomNotification = useCallback(() => {
     const randomBuyerName = buyerNames[Math.floor(Math.random() * buyerNames.length)];
@@ -98,18 +92,8 @@ export default function useNotifications({
     }
   }, [notifications, maxNotifications, removeNotification]);
 
-  // Gerar notificações em intervalos aleatórios
-  useEffect(() => {
-    if (!enabled || isPaused) return;
-
-    const interval = Math.floor(Math.random() * (maxInterval - minInterval + 1) + minInterval);
-    
-    const timeoutId = setTimeout(() => {
-      generateRandomNotification();
-    }, interval);
-
-    return () => clearTimeout(timeoutId);
-  }, [enabled, isPaused, generateRandomNotification, minInterval, maxInterval, notifications]);
+  // NOTIFICAÇÕES AUTOMÁTICAS REMOVIDAS - apenas notificações manuais via botão
+  // O useEffect que gerava notificações automáticas foi removido completamente
 
   return {
     notifications,

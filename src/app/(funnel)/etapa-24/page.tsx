@@ -1,6 +1,6 @@
 'use client';
 
-import { useFunnel } from '@/contexts/FunnelContext';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { PackageCheck, BookOpen, RefreshCw, ShieldCheck } from 'lucide-react';
 

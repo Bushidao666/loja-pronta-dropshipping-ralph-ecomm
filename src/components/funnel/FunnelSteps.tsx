@@ -13,10 +13,10 @@ function EtapaContent({ step }: { step: number }) {
 
           <div className="space-y-3 my-4">
             <p className="text-lg font-medium bg-black/30 p-3 rounded-lg border-l-4 border-green-500 text-white">
-              <span className="bg-white/10 px-2 py-1 rounded mr-2">Você salvou 47 vídeos</span> de "como ganhar dinheiro online".
+              <span className="bg-white/10 px-2 py-1 rounded mr-2">Você salvou 47 vídeos</span> de &ldquo;como ganhar dinheiro online&rdquo;.
             </p>
             <p className="text-lg font-medium bg-black/30 p-3 rounded-lg border-l-4 border-green-500 text-white">
-              <span className="bg-white/10 px-2 py-1 rounded mr-2">Seguiu 23 "gurus"</span> no Instagram.
+              <span className="bg-white/10 px-2 py-1 rounded mr-2">Seguiu 23 &ldquo;gurus&rdquo;</span> no Instagram.
             </p>
             <p className="text-lg font-medium bg-black/30 p-3 rounded-lg border-l-4 border-green-500 text-white">
               <span className="bg-white/10 px-2 py-1 rounded mr-2">E ainda está na estaca zero.</span>
@@ -33,19 +33,19 @@ function EtapaContent({ step }: { step: number }) {
       return (
         <div className="space-y-4">
           <p className="text-2xl font-bold text-green-400">
-            Eles pararam de "se preparar" e começaram.
+            Eles pararam de &ldquo;se preparar&rdquo; e começaram.
           </p>
 
           <div className="space-y-5 my-4">
             <div className="space-y-2">
-              <p className="text-lg text-white/70">Enquanto você pesquisa o "método perfeito"...</p>
+              <p className="text-lg text-white/70">Enquanto você pesquisa o &ldquo;método perfeito&rdquo;...</p>
               <p className="text-xl font-medium bg-black/30 p-3 rounded-lg border-l-4 border-green-500 text-white">
                 <span className="bg-white/10 px-2 py-1 rounded mr-2">Eles estão recebendo notificação de venda no celular.</span>
               </p>
             </div>
             
             <div className="space-y-2">
-              <p className="text-lg text-white/70">Enquanto você "estuda" dropshipping...</p>
+              <p className="text-lg text-white/70">Enquanto você &ldquo;estuda&rdquo; dropshipping...</p>
               <p className="text-xl font-medium bg-black/30 p-3 rounded-lg border-l-4 border-green-500 text-white">
                 <span className="bg-white/10 px-2 py-1 rounded mr-2">Eles estão contando o dinheiro que ganhou hoje.</span>
               </p>
@@ -95,13 +95,13 @@ function EtapaContent({ step }: { step: number }) {
 
           <div className="space-y-3 my-4">
             <p className="text-lg italic bg-black/30 p-3 rounded-lg text-white">
-              <span className="bg-white/10 px-2 py-1 rounded mr-2">"Vou estudar mais um pouco..."</span>
+              <span className="bg-white/10 px-2 py-1 rounded mr-2">&ldquo;Vou estudar mais um pouco...&rdquo;</span>
             </p>
             <p className="text-lg italic bg-black/30 p-3 rounded-lg text-white">
-              <span className="bg-white/10 px-2 py-1 rounded mr-2">"Preciso me preparar melhor..."</span>
+              <span className="bg-white/10 px-2 py-1 rounded mr-2">&ldquo;Preciso me preparar melhor...&rdquo;</span>
             </p>
             <p className="text-lg italic bg-black/30 p-3 rounded-lg text-white">
-              <span className="bg-white/10 px-2 py-1 rounded mr-2">"Ainda não é a hora certa..."</span>
+              <span className="bg-white/10 px-2 py-1 rounded mr-2">&ldquo;Ainda não é a hora certa...&rdquo;</span>
             </p>
           </div>
 
@@ -152,7 +152,7 @@ function EtapaContent({ step }: { step: number }) {
 function getStepTitle(step: number): string {
   switch (step) {
     case 1:
-      return 'Por Que Você Ainda Está "Se Preparando" Para Começar';
+      return 'Por Que Você Ainda Está &ldquo;Se Preparando&rdquo; Para Começar';
     case 2:
       return 'A Diferença Brutal Entre Você E Quem Vende';
     case 3:
@@ -182,7 +182,7 @@ export default function FunnelSteps() {
         >
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
             <span dangerouslySetInnerHTML={{ 
-              __html: getStepTitle(currentStep).replace(/[""]([^""]*)[""]/, '<span class="text-green-400">"$1"</span>')
+              __html: getStepTitle(currentStep).replace(/&ldquo;([^&]*)&rdquo;/, '<span class="text-green-400">&ldquo;$1&rdquo;</span>')
             }} />
           </h1>
         </motion.div>

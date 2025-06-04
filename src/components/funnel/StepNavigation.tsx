@@ -1,7 +1,9 @@
+'use client';
+
 import React from 'react';
 import useFunnelState from '@/hooks/useFunnelState';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Rocket, LockKeyhole, LucideIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Rocket, LucideIcon } from 'lucide-react';
 
 interface StepNavigationProps {
   onNext?: () => void; // Custom logic before or after navigating

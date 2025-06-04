@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Mail, Phone, CreditCard } from 'lucide-react';
 import { Button } from './button';
@@ -23,6 +23,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     phone: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const hasTriggeredInitiateCheckout = useRef(false);
 
   // Carregar dados do store quando o modal abrir
   useEffect(() => {
@@ -33,8 +34,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         phone: userPhone || '',
       });
       
-      // Disparar evento InitiateCheckout quando o modal abrir
-      fbPixelTrack.initiateCheckout(97);
+      // Reset do flag quando o modal abrir
+      hasTriggeredInitiateCheckout.current = false;
     }
   }, [isOpen, userName, userEmail, userPhone]);
 
@@ -71,11 +72,20 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     handleInputChange('phone', formatted);
   };
 
-  const isFormValid = () => {
+  const isFormValid = useCallback(() => {
     return formData.name.trim() && 
            formData.email.trim().includes('@') && 
            formData.phone.replace(/\D/g, '').length >= 10;
-  };
+  }, [formData.name, formData.email, formData.phone]);
+
+  // Disparar InitiateCheckout apenas quando o formulário ficar válido pela primeira vez
+  useEffect(() => {
+    if (isOpen && isFormValid() && !hasTriggeredInitiateCheckout.current) {
+      console.log('Disparando InitiateCheckout - formulário válido');
+      fbPixelTrack.initiateCheckout(97);
+      hasTriggeredInitiateCheckout.current = true;
+    }
+  }, [isOpen, isFormValid]);
 
   const handleSubmit = () => {
     if (!isFormValid()) return;

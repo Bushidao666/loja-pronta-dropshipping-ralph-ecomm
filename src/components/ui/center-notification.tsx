@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Clock, X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 interface CenterNotificationProps {
   buyerName: string;
@@ -70,9 +71,15 @@ export function CenterNotification({
 
       {/* Layout compacto estilo mobile */}
       <div className="flex items-center gap-2">
-        {/* Ícone da Shopify */}
-        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-black/40">
-          <img src="/icons/shopify-icon.svg" alt="Shopify" className="h-4 w-4" />
+        {/* Ícone do Shopify */}
+        <div className="flex-shrink-0">
+          <Image 
+            src="/icons/shopify-icon.svg" 
+            alt="Shopify" 
+            className="h-6 w-6 text-green-500" 
+            width={24}
+            height={24}
+          />
         </div>
         
         {/* Conteúdo principal */}

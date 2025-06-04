@@ -2,8 +2,10 @@
 
 import { useEffect } from 'react';
 import Script from 'next/script';
+import Image from 'next/image';
 import { config } from '@/lib/config';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
   interface Window {
     fbq: any;
@@ -21,8 +23,8 @@ export function FacebookPixel({ pixelId = config.facebookPixelId }: FacebookPixe
     if (typeof window !== 'undefined' && !window.fbq) {
       // Initialize Facebook Pixel usando o código original
       const initScript = () => {
-        (window as any).fbq = (window as any).fbq || function() {
-          ((window as any).fbq.q = (window as any).fbq.q || []).push(arguments);
+        (window as any).fbq = (window as any).fbq || function(...args: any[]) {
+          ((window as any).fbq.q = (window as any).fbq.q || []).push(args);
         };
         (window as any).fbq.loaded = true;
         (window as any).fbq.version = '2.0';
@@ -66,9 +68,9 @@ export function FacebookPixel({ pixelId = config.facebookPixelId }: FacebookPixe
       
       {/* Noscript fallback */}
       <noscript>
-        <img 
-          height="1" 
-          width="1" 
+        <Image 
+          height={1} 
+          width={1} 
           style={{ display: 'none' }}
           src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
           alt=""
@@ -118,4 +120,5 @@ export const fbPixelTrack = {
       (window as any).fbq('trackCustom', eventName, parameters);
     }
   }
-}; 
+};
+/* eslint-enable @typescript-eslint/no-explicit-any */ 

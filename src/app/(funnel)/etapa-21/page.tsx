@@ -1,9 +1,9 @@
 'use client';
 
-import { useFunnel } from '@/contexts/FunnelContext';
+import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function Etapa21Page() {
+export default function Etapa21() {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex-1 flex flex-col justify-center items-center px-4">
@@ -36,7 +36,7 @@ export default function Etapa21Page() {
                 </p>
                 <p className="text-xl sm:text-2xl text-white font-bold text-center bg-black/20 p-3 rounded-md">
                   Ele responde:<br/>
-                  <span className="text-green-400">"Comprei uma loja pronta por R$97. Melhor investimento da minha vida."</span>
+                  <span className="text-green-400">&ldquo;Comprei uma loja pronta por R$97. Melhor investimento da minha vida.&rdquo;</span>
                 </p>
             </div>
           </motion.div>

@@ -1,9 +1,9 @@
 'use client';
 
-import { useFunnel } from '@/contexts/FunnelContext';
+import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function Etapa7Page() {
+export default function Etapa7() {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex-1 flex flex-col justify-center items-center px-4">
@@ -27,13 +27,13 @@ export default function Etapa7Page() {
             <div className="flex flex-col space-y-4">
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl text-white">
-                  <span className="font-bold text-green-400">5h30 da manhã:</span> Alarme toca. "Mais um dia igual".
+                  <span className="font-bold text-green-400">5h30 da manhã:</span> Alarme toca. &ldquo;Mais um dia igual&rdquo;.
                 </p>
               </div>
               
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl text-white">
-                  <span className="font-bold text-green-400">No trânsito:</span> Vê story de alguém "trabalhando da praia".
+                  <span className="font-bold text-green-400">No trânsito:</span> Vê story de alguém &ldquo;trabalhando da praia&rdquo;.
                 </p>
               </div>
               
@@ -45,7 +45,7 @@ export default function Etapa7Page() {
               
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl text-white">
-                  <span className="font-bold text-green-400">À noite:</span> Promete que "amanhã vai começar".
+                  <span className="font-bold text-green-400">À noite:</span> Promete que &ldquo;amanhã vai começar&rdquo;.
                 </p>
               </div>
             </div>

@@ -1,6 +1,5 @@
 'use client';
 
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FunnelProvider } from '@/contexts/FunnelContext';
@@ -48,7 +47,7 @@ export default function RootLayout({
         <FacebookPixel />
         <FunnelProvider>
           <main className="relative z-10">
-            {children}
+        {children}
           </main>
         </FunnelProvider>
       </body>

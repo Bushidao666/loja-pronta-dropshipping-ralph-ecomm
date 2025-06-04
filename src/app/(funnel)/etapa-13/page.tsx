@@ -1,9 +1,9 @@
 'use client';
 
-import { useFunnel } from '@/contexts/FunnelContext';
+import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function Etapa13Page() {
+export default function Etapa13() {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex-1 flex flex-col justify-center items-center px-4">
@@ -49,7 +49,7 @@ export default function Etapa13Page() {
             </div>
 
             <p className="text-xl sm:text-2xl font-bold text-white text-center pt-4">
-              Pare de usar "preparação" como <span className="text-red-400">desculpa.</span>
+              Pare de usar &ldquo;preparação&rdquo; como <span className="text-red-400">desculpa.</span>
             </p>
           </motion.div>
         </div>

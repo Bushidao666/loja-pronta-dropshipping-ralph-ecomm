@@ -1,9 +1,9 @@
 'use client';
 
-import { useFunnel } from '@/contexts/FunnelContext';
+import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function Etapa4Page() {
+export default function Etapa4() {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex-1 flex flex-col justify-center items-center px-4">
@@ -31,17 +31,17 @@ export default function Etapa4Page() {
             <div className="flex flex-col space-y-4 py-4">
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl italic text-white">
-                  <span className="bg-white/10 px-2 py-1 rounded mr-2">"Vou estudar mais um pouco..."</span>
+                  <span className="bg-white/10 px-2 py-1 rounded mr-2">&ldquo;Vou estudar mais um pouco...&rdquo;</span>
                 </p>
               </div>
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl italic text-white">
-                  <span className="bg-white/10 px-2 py-1 rounded mr-2">"Preciso me preparar melhor..."</span>
+                  <span className="bg-white/10 px-2 py-1 rounded mr-2">&ldquo;Preciso me preparar melhor...&rdquo;</span>
                 </p>
               </div>
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl italic text-white">
-                  <span className="bg-white/10 px-2 py-1 rounded mr-2">"Ainda não é a hora certa..."</span>
+                  <span className="bg-white/10 px-2 py-1 rounded mr-2">&ldquo;Ainda não é a hora certa...&rdquo;</span>
                 </p>
               </div>
             </div>
@@ -49,7 +49,7 @@ export default function Etapa4Page() {
             <p className="text-2xl sm:text-3xl font-bold text-green-400 text-center pt-2">
               Mentira.
             </p>
-
+            
             <p className="text-xl sm:text-2xl font-medium text-white text-center">
               Você só está com medo de ser feito de trouxa novamente.
             </p>

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Clock, X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 interface GlassNotificationProps {
   buyerName: string;
@@ -69,8 +70,14 @@ export function GlassNotification({
       
       {/* Conteúdo da notificação */}
       <div className="flex items-start gap-2">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded bg-white/10">
-          <img src="/icons/shopify-icon.svg" alt="Shopify" className="h-5 w-5" />
+        <div className="flex-shrink-0">
+          <Image 
+            src="/icons/shopify-icon.svg" 
+            alt="Shopify" 
+            className="h-6 w-6 text-green-500" 
+            width={24}
+            height={24}
+          />
         </div>
         
         <div className="flex-1">

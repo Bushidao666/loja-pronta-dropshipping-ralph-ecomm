@@ -6,13 +6,10 @@ import { CenterNotification } from '@/components/ui/center-notification';
 import { CheckoutModal } from '@/components/ui/checkout-modal';
 import { AnimatePresence } from 'framer-motion';
 import { useFunnel } from '@/contexts/FunnelContext';
-import { GlassProfitCounter } from '@/components/ui/glass-profit-counter';
 import { GlassStepNavigation } from '@/components/ui/glass-step-navigation';
 import { fbPixelTrack } from '@/components/analytics/facebook-pixel';
 import { Users, LineChart, ShoppingCart } from 'lucide-react';
-
-// Definir o tipo de notificação
-type NotificationType = 'corner' | 'center';
+import Image from 'next/image';
 
 // Componente que exibe as notificações
 function NotificationsDisplay() {
@@ -80,7 +77,7 @@ function StickyHeader() {
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-black/30 border-b border-white/10">
       <div className="container mx-auto flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <div className="flex items-center gap-2">
-          <img src="/icons/shopify-icon.svg" alt="Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
+          <Image src="/icons/shopify-icon.svg" alt="Logo" className="h-6 w-6 sm:h-8 sm:w-8" width={32} height={32} />
         </div>
         <div className="flex items-center gap-3 sm:gap-6">
           {/* Visitantes online */}
@@ -112,9 +109,9 @@ function StickyHeader() {
   );
 }
 
-// Footer fixo para os botões de navegação
+// Footer fixo para os botões de navegação (SEM duplicação de notificações)
 function StickyFooter() {
-  const { nextStep, previousStep, currentStep, totalSteps, addNewNotification } = useFunnel();
+  const { nextStep, previousStep, currentStep, totalSteps } = useFunnel();
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   
   // Definir texto do botão com base na etapa atual
@@ -176,7 +173,7 @@ function StickyFooter() {
   // Mostrar botão de voltar apenas após a primeira etapa
   const showBackButton = currentStep > 1;
   
-  // Função para avançar e gerar notificação
+  // Função simplificada - SEM adicionar notificações aqui (evita duplicação)
   const handleAdvance = () => {
     // Se for a última etapa (24), abrir modal de checkout
     if (currentStep === 24) {
@@ -184,14 +181,8 @@ function StickyFooter() {
       return;
     }
     
-    // Gerar notificação instantaneamente ao clicar
-    addNewNotification();
-    
-    // Pequeno delay antes de avançar para garantir que a notificação seja exibida
-    setTimeout(() => {
-      // Avançar para a próxima etapa
-      nextStep();
-    }, 300);
+    // Apenas avança para a próxima etapa (sem notificação)
+    nextStep();
   };
   
   return (

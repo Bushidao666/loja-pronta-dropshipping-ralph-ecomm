@@ -1,9 +1,9 @@
 'use client';
 
-import { useFunnel } from '@/contexts/FunnelContext';
+import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function Etapa12Page() {
+export default function Etapa12() {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex-1 flex flex-col justify-center items-center px-4">
@@ -31,17 +31,17 @@ export default function Etapa12Page() {
             <div className="flex flex-col space-y-4">
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl italic text-white">
-                  "Vou aprender HTML primeiro"
+                  &ldquo;Vou aprender HTML primeiro&rdquo;
                 </p>
               </div>
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl italic text-white">
-                  "Preciso fazer curso de marketing"
+                  &ldquo;Preciso fazer curso de marketing&rdquo;
                 </p>
               </div>
               <div className="bg-black/30 py-3 px-4 rounded-lg border-l-2 border-green-500">
                 <p className="text-lg sm:text-xl italic text-white">
-                  "Vou economizar mais R$5.000 antes"
+                  &ldquo;Vou economizar mais R$5.000 antes&rdquo;
                 </p>
               </div>
             </div>
@@ -49,10 +49,9 @@ export default function Etapa12Page() {
             <div className="bg-black/40 py-4 px-5 rounded-lg border-2 border-red-500/50 shadow-lg">
                 <p className="text-xl sm:text-2xl text-white text-center">
                     <span className="font-bold text-red-400">Resultado:</span><br/>
-                    6 meses depois você ainda vai estar "se preparando".
+                    6 meses depois você ainda vai estar &ldquo;se preparando&rdquo;.
                 </p>
             </div>
-
           </motion.div>
         </div>
       </div>

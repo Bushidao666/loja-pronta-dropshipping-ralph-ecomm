@@ -1,9 +1,9 @@
 'use client';
 
-import { useFunnel } from '@/contexts/FunnelContext';
+import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function Etapa15Page() {
+export default function Etapa15() {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex-1 flex flex-col justify-center items-center px-4">
@@ -31,14 +31,14 @@ export default function Etapa15Page() {
             <p className="text-xl sm:text-2xl font-bold text-white text-center">
               E você tem 2 anos pra esperar?
             </p>
-
+            
             <div className="bg-black/30 py-4 px-5 rounded-lg border-l-4 border-green-500">
                 <p className="text-lg sm:text-xl text-white text-center">
-                  Enquanto você "aprende"...<br/>
+                  Enquanto você &ldquo;aprende&rdquo;...<br/>
                   <span className="font-bold text-green-400">Outros estão vendendo com lojas profissionais.</span>
                 </p>
             </div>
-
+            
             <p className="text-xl sm:text-2xl font-bold text-green-400 text-center pt-3">
               Que tal pular essa parte?
             </p>
