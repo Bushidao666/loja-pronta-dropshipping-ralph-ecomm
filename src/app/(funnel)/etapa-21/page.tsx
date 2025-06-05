@@ -1,10 +1,42 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
+import { sendViewContentCAPIEvent } from '@/lib/fb-capi-service';
 
 export default function Etapa21() {
+  useEffect(() => {
+    const productDetails = {
+      content_name: "Garantia Dupla de Satisfação",
+      content_category: "Garantia",
+      content_ids: ['garantia-dupla-etapa21'],
+      content_type: "product" as const,
+      value: 97,
+      currency: "BRL",
+      contents: [
+        {
+          id: 'garantia-dupla-etapa21',
+          quantity: 1,
+          item_price: 97
+        }
+      ],
+      num_items: 1
+    };
+
+    sendViewContentCAPIEvent(productDetails)
+      .then(response => {
+        if (response.success) {
+          console.log('[ETAPA 21] ViewContent CAPI event sent successfully. Event ID:', response.eventId);
+        } else {
+          console.error('[ETAPA 21] Failed to send ViewContent CAPI event. Error:', response.error);
+        }
+      })
+      .catch(error => {
+        console.error('[ETAPA 21] Error during sendViewContentCAPIEvent:', error);
+      });
+  }, []);
+
   return (
     <div className="flex flex-col w-full h-full overflow-hidden">
       <div className="flex-1 flex flex-col justify-center items-center px-2 sm:px-4 py-2 min-h-0">

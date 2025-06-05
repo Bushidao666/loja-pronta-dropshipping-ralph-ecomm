@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FunnelProvider } from '@/contexts/FunnelContext';
 import { FacebookPixel } from '@/components/analytics/facebook-pixel';
+import { FacebookCAPITracker } from "@/components/analytics/facebook-capi-tracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
         </div>
         
         <FacebookPixel />
+        <FacebookCAPITracker />
         <FunnelProvider>
           <main className="relative z-10">
         {children}

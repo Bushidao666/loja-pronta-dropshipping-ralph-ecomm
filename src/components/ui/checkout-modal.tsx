@@ -7,7 +7,15 @@ import { Button } from './button';
 import { cn } from '@/lib/utils';
 import useFunnelStore from '@/store/funnelStore';
 import { config } from '@/lib/config';
-import { fbPixelTrack } from '@/components/analytics/facebook-pixel';
+// import { fbPixelTrack } from '@/components/analytics/facebook-pixel'; // fbPixelTrack.lead not used directly with eventID
+import {
+  sendInitiateCheckoutCAPIEvent,
+  sendLeadCAPIEvent, // Added import
+  type InitiateCheckoutPII,
+  type LeadPII, // Added import
+  generateUUID, // Added import for generating event IDs
+  getUrlParameters // Added import for getting URL parameters
+} from '@/lib/fb-capi-service';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -23,9 +31,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     phone: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const hasTriggeredInitiateCheckout = useRef(false);
+  // const hasTriggeredPixelInitiateCheckout = useRef(false); // No longer needed
 
-  // Carregar dados do store quando o modal abrir
   useEffect(() => {
     if (isOpen) {
       setFormData({
@@ -33,36 +40,26 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         email: userEmail || '',
         phone: userPhone || '',
       });
-      
-      // Reset do flag quando o modal abrir
-      hasTriggeredInitiateCheckout.current = false;
+      // hasTriggeredPixelInitiateCheckout.current = false; // No longer needed
     }
   }, [isOpen, userName, userEmail, userPhone]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Salvar no store em tempo real
     switch (field) {
-      case 'name':
-        setUserName(value);
-        break;
-      case 'email':
-        setUserEmail(value);
-        break;
-      case 'phone':
-        setUserPhone(value);
-        break;
+      case 'name': setUserName(value); break;
+      case 'email': setUserEmail(value); break;
+      case 'phone': setUserPhone(value); break;
     }
   };
 
   const formatPhone = (value: string) => {
-    // Remove tudo que não é número
     const numbers = value.replace(/\D/g, '');
-    
-    // Aplica a máscara (XX) XXXXX-XXXX
     if (numbers.length <= 11) {
       return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    }
+    if (numbers.length > 11) { 
+        return numbers.slice(0, 11).replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
     }
     return value;
   };
@@ -78,38 +75,112 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
            formData.phone.replace(/\D/g, '').length >= 10;
   }, [formData.name, formData.email, formData.phone]);
 
-  // Disparar InitiateCheckout apenas quando o formulário ficar válido pela primeira vez
-  useEffect(() => {
-    if (isOpen && isFormValid() && !hasTriggeredInitiateCheckout.current) {
-      console.log('Disparando InitiateCheckout - formulário válido');
-      fbPixelTrack.initiateCheckout(97);
-      hasTriggeredInitiateCheckout.current = true;
-    }
-  }, [isOpen, isFormValid]);
+  // useEffect for PIXEL InitiateCheckout on form valid REMOVED
+  // It will now be triggered on submit
 
-  const handleSubmit = () => {
-    if (!isFormValid()) return;
+  const handleSubmit = async () => {
+    if (!isFormValid() || isSubmitting) return;
     
     setIsSubmitting(true);
     
-    // Disparar evento Lead quando o formulário é enviado
-    fbPixelTrack.lead('Checkout Form Submitted');
+    const nameParts = formData.name.trim().split(' ');
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(' ') || firstName;
+
+    const piiPayload: LeadPII = { // Can be used for both Lead and InitiateCheckout PII
+      em: [formData.email.trim()],
+      fn: [firstName],
+      ln: [lastName],
+      ph: [formData.phone.replace(/\D/g, '')],
+    };
+
+    // --- InitiateCheckout Event (Pixel & CAPI) --- 
+    const initiateCheckoutEventId = generateUUID();
+    const productDetailsForPixelAndCAPI = {
+      content_name: "Sistema Drop360° Global",
+      content_ids: ['sistema-drop360-global-97'],
+      content_type: "product" as const,
+      value: 97,
+      currency: "BRL",
+      num_items: 1,
+      contents: [{ id: 'sistema-drop360-global-97', quantity: 1, item_price: 97 }]
+    };
+
+    // Pixel InitiateCheckout
+    if (typeof window !== 'undefined' && window.fbq) {
+      console.log('[MODAL] Sending InitiateCheckout (PIXEL) on submit. Event ID:', initiateCheckoutEventId);
+      window.fbq('track', 'InitiateCheckout', productDetailsForPixelAndCAPI, { eventID: initiateCheckoutEventId });
+    }
+
+    // CAPI InitiateCheckout
+    try {
+      console.log('[MODAL] Sending InitiateCheckout (CAPI) on submit. Event ID:', initiateCheckoutEventId);
+      const capiInitiateCheckoutResponse = await sendInitiateCheckoutCAPIEvent(productDetailsForPixelAndCAPI, piiPayload, initiateCheckoutEventId);
+      if (capiInitiateCheckoutResponse.success) {
+        console.log('[MODAL] InitiateCheckout (CAPI) event sent successfully. FB Trace ID:', capiInitiateCheckoutResponse.fbtrace_id);
+      } else {
+        console.error('[MODAL] Failed to send InitiateCheckout (CAPI) event. Error:', capiInitiateCheckoutResponse.error);
+      }
+    } catch (error) {
+      console.error('[MODAL] Error during CAPI InitiateCheckout dispatch:', error);
+    }
+
+    // --- Lead Event (Pixel & CAPI) ---
+    const leadEventId = generateUUID();
+    const leadContentName = 'Checkout Form Submitted';
     
-    // Preparar dados para a URL da Kiwify
-    const params = new URLSearchParams({
+    // Pixel Lead
+    if (typeof window !== 'undefined' && window.fbq) {
+      console.log('[MODAL] Sending Lead (PIXEL) on submit. Event ID:', leadEventId);
+      window.fbq('track', 'Lead', { content_name: leadContentName }, { eventID: leadEventId });
+    }
+
+    // CAPI Lead
+    const leadCustomDataCAPI = {
+      content_name: leadContentName,
+      content_category: "Form Submission", // Optional: add category for CAPI lead
+      value: 0, // Leads typically have no immediate monetary value
+      currency: "BRL"
+    };
+    try {
+      console.log('[MODAL] Sending Lead (CAPI) on submit. Event ID:', leadEventId);
+      const capiLeadResponse = await sendLeadCAPIEvent(leadCustomDataCAPI, piiPayload, leadEventId);
+      if (capiLeadResponse.success) {
+        console.log('[MODAL] Lead (CAPI) event sent successfully. FB Trace ID:', capiLeadResponse.fbtrace_id);
+      } else {
+        console.error('[MODAL] Failed to send Lead (CAPI) event. Error:', capiLeadResponse.error);
+      }
+    } catch (error) {
+      console.error('[MODAL] Error during CAPI Lead dispatch:', error);
+    }
+    
+    // --- Construct Kiwify Redirect URL with UTMs --- 
+    const kiwifyParams = new URLSearchParams({
       name: formData.name.trim(),
       email: formData.email.trim(),
-      phone: formData.phone.replace(/\D/g, ''), // Enviar só números
+      phone: formData.phone.replace(/\D/g, ''),
       region: 'br'
     });
+
+    // Get current page UTMs and append them
+    const currentPageParams = getUrlParameters();
+    for (const key in currentPageParams) {
+      if (key.startsWith('utm_')) {
+        kiwifyParams.append(key, currentPageParams[key]);
+      }
+    }
+    // Also append fbclid if present, as some platforms might use it as a general click ID
+    if (currentPageParams.fbclid) {
+        kiwifyParams.append('fbclid', currentPageParams.fbclid);
+    }
     
-    // Usar a URL da variável de ambiente
-    const checkoutUrl = `${config.checkoutUrl}?${params.toString()}`;
+    const checkoutUrl = `${config.checkoutUrl}?${kiwifyParams.toString()}`;
+    console.log('[MODAL] Redirecting to Kiwify URL:', checkoutUrl);
     
-    // Pequeno delay para animação antes de redirecionar
     setTimeout(() => {
       window.location.href = checkoutUrl;
-    }, 500);
+      // setIsSubmitting(false); // Consider if modal can be re-opened and re-submitted before redirect
+    }, 1000); 
   };
 
   return (
