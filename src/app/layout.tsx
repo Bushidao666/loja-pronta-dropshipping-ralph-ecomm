@@ -1,5 +1,6 @@
 'use client';
 
+import React, { Suspense } from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FunnelProvider } from '@/contexts/FunnelContext';
@@ -46,7 +47,9 @@ export default function RootLayout({
         </div>
         
         <FacebookPixel />
-        <FacebookCAPITracker />
+        <Suspense fallback={null}>
+          <FacebookCAPITracker />
+        </Suspense>
         <FunnelProvider>
           <main className="relative z-10">
         {children}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Mail, Phone, CreditCard } from 'lucide-react';
 import { Button } from './button';
@@ -11,7 +11,6 @@ import { config } from '@/lib/config';
 import {
   sendInitiateCheckoutCAPIEvent,
   sendLeadCAPIEvent, // Added import
-  type InitiateCheckoutPII,
   type LeadPII, // Added import
   generateUUID, // Added import for generating event IDs
   getUrlParameters // Added import for getting URL parameters
@@ -121,8 +120,9 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       } else {
         console.error('[MODAL] Failed to send InitiateCheckout (CAPI) event. Error:', capiInitiateCheckoutResponse.error);
       }
-    } catch (error) {
-      console.error('[MODAL] Error during CAPI InitiateCheckout dispatch:', error);
+    } catch (error: unknown) {
+      console.error('[MODAL] Error during CAPI InitiateCheckout dispatch:');
+      if (error instanceof Error) { console.error(error.message); } else { console.error(error); }
     }
 
     // --- Lead Event (Pixel & CAPI) ---
@@ -150,8 +150,9 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       } else {
         console.error('[MODAL] Failed to send Lead (CAPI) event. Error:', capiLeadResponse.error);
       }
-    } catch (error) {
-      console.error('[MODAL] Error during CAPI Lead dispatch:', error);
+    } catch (error: unknown) {
+      console.error('[MODAL] Error during CAPI Lead dispatch:');
+      if (error instanceof Error) { console.error(error.message); } else { console.error(error); }
     }
     
     // --- Construct Kiwify Redirect URL with UTMs --- 

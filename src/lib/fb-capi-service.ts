@@ -15,7 +15,7 @@ export function getCookie(name: string): string | undefined {
   return undefined;
 }
 
-export function setCookie(name: string, value: string, days: number = 365): void {
+export function setCookie(name: string, value: string, days: number = 365 * 2): void {
   if (typeof document === 'undefined') return;
   const expires = new Date();
   expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -60,14 +60,16 @@ function getFbclidFromUrl(): string | undefined {
 
 // --- User Data Management ---
 // UserData interface stores raw PII. Server will hash.
-export interface UserData {
+export interface UserDataPiiFields {
+  em?: string[];
+  ph?: string[];
+  fn?: string[];
+  ln?: string[];
   external_id?: string[];
-  em?: string[];      // Raw email
-  ph?: string[];      // Raw phone
-  fn?: string[];      // Raw first name
-  ln?: string[];      // Raw last name
-  fbc?: string;       // Facebook Click ID from _fbc cookie or fbclid URL param
-  fbp?: string;       // Facebook Browser ID from _fbp cookie
+}
+export interface UserData extends UserDataPiiFields {
+  fbc?: string;
+  fbp?: string;
   // client_ip_address and client_user_agent will be added by the server.
   // Other fields like ge, db, zp, ct, st as per Facebook CAPI docs can be added if needed.
 }
@@ -105,7 +107,7 @@ export function loadUserDataFromLocalStorage(): void {
         globalUserData.fbc = globalUserData.fbc || getCookie('_fbc') || getFbclidFromUrl();
         localStorage.setItem('fb_user_data', JSON.stringify(globalUserData));
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('[FB CAPI] Error loading user data from localStorage:', error);
   }
 }
@@ -116,18 +118,18 @@ export function updateGlobalUserData(newData: Partial<UserData>): void {
   const updatedData = { ...globalUserData, ...newData };
 
   // Ensure PII fields are arrays of strings if they are provided
-  const piiFields: (keyof UserData)[] = ['em', 'ph', 'fn', 'ln', 'external_id'];
+  const piiFields: (keyof UserDataPiiFields)[] = ['em', 'ph', 'fn', 'ln', 'external_id'];
   piiFields.forEach(field => {
-    if (newData[field] !== undefined) { // If new data for this field is provided
-      const value = newData[field];
-      if (Array.isArray(value)) {
-        updatedData[field] = value.map(String) as any;
+    const newValue = newData[field];
+    if (newValue !== undefined) {
+      if (Array.isArray(newValue)) {
+        updatedData[field] = newValue.map(String);
       } else {
-        updatedData[field] = [String(value)] as any;
+        updatedData[field] = [String(newValue)];
       }
     } else if (updatedData[field] !== undefined && !Array.isArray(updatedData[field])) {
         // If existing data for this field is not an array, convert it
-        updatedData[field] = [String(updatedData[field])] as any;
+        updatedData[field] = [String(updatedData[field])];
     }
   });
 
@@ -137,7 +139,7 @@ export function updateGlobalUserData(newData: Partial<UserData>): void {
 }
 
 // --- Debug Logging ---
-function debugLog(message: string, ...data: any[]): void {
+function debugLog(message: string, ...data: unknown[]): void {
   if (DEBUG_MODE) {
     console.log(`[FB CAPI DEBUG] ${message}`, ...data);
   }
@@ -149,7 +151,7 @@ export interface CAPIEventResponse {
   eventId?: string;
   error?: string;
   fbtrace_id?: string;
-  diagnostics?: any;
+  diagnostics?: unknown;
 }
 
 // --- Generic Event Sending Function ---
@@ -159,15 +161,15 @@ interface BasePayload {
   eventSourceUrl: string;
   urlParameters: Record<string, string>;
   actionSource: 'website';
-  customData?: Record<string, any>;
+  customData?: Record<string, unknown>;
   event_time: number; // Facebook expects event_time (Unix timestamp in seconds)
 }
 
 async function sendCAPIEvent(
   eventName: string,
   endpointPath: string,
-  customData?: Record<string, any>,
-  piiForEvent?: Partial<Pick<UserData, 'em' | 'ph' | 'fn' | 'ln'>>,
+  customData?: Record<string, unknown>,
+  piiForEvent?: Partial<UserDataPiiFields>,
   explicitEventId?: string
 ): Promise<CAPIEventResponse> {
   if (typeof window === 'undefined') {
@@ -186,13 +188,14 @@ async function sendCAPIEvent(
 
   // Create a snapshot of globalUserData for this event to ensure correct PII array format
   const eventUserData: UserData = { ...globalUserData };
-  const piiFieldsToEnsureArray: (keyof UserData)[] = ['em', 'ph', 'fn', 'ln', 'external_id'];
+  const piiFieldsToEnsureArray: (keyof UserDataPiiFields)[] = ['em', 'ph', 'fn', 'ln', 'external_id'];
   piiFieldsToEnsureArray.forEach(field => {
-    if (eventUserData[field] !== undefined) {
-      if (Array.isArray(eventUserData[field])) {
-        eventUserData[field] = eventUserData[field]?.map(String) as any;
+    const currentValue = eventUserData[field];
+    if (currentValue !== undefined) {
+      if (Array.isArray(currentValue)) {
+        eventUserData[field] = currentValue.map(String);
       } else {
-        eventUserData[field] = [String(eventUserData[field])] as any;
+        eventUserData[field] = [String(currentValue)];
       }
     }
   });
@@ -232,25 +235,37 @@ async function sendCAPIEvent(
       body: JSON.stringify(payload),
     });
 
-    const responseData = await response.json();
+    const responseData = await response.json() as CAPIEventResponse;
 
     if (response.ok && responseData.success) {
       debugLog(`${eventName} CAPI event sent successfully:`, { eventId, responseData });
-      return { success: true, eventId, fbtrace_id: responseData.fbtrace_id, diagnostics: responseData.diagnostics };
+      return { ...responseData, eventId, success: true };
     } else {
       console.error(`Failed to send ${eventName} CAPI event (${response.status}):`, responseData);
-      return { success: false, error: responseData.error || responseData.message || 'Unknown error', fbtrace_id: responseData.fbtrace_id, diagnostics: responseData.diagnostics };
+      const errorMessage = responseData.error || 
+                           (typeof responseData === 'object' && responseData !== null && 'message' in responseData ? String(responseData.message) : 'Unknown error');
+      return { 
+        success: false, 
+        error: errorMessage,
+        fbtrace_id: responseData.fbtrace_id,
+        diagnostics: responseData.diagnostics 
+      };
     }
-  } catch (error: any) {
-    console.error(`Error sending ${eventName} CAPI event:`, error);
-    return { success: false, error: error.message || 'Network error' };
+  } catch (error: unknown) {
+    console.error(`Error sending ${eventName} CAPI event:`);
+    if (error instanceof Error) {
+      console.error(error.message);
+      return { success: false, error: error.message };
+    }
+    console.error(error);
+    return { success: false, error: 'Unknown network or parsing error' };
   }
 }
 
 // --- Specific Event Functions ---
 
 export async function sendPageViewCAPIEvent(
-    piiForEvent?: Partial<Pick<UserData, 'em' | 'ph' | 'fn' | 'ln'>>,
+    piiForEvent?: Partial<UserDataPiiFields>,
     explicitEventId?: string
 ): Promise<CAPIEventResponse> {
   // customData for PageView is often minimal or handled by backend (e.g. UTMs from urlParameters)
@@ -265,11 +280,11 @@ export async function sendViewContentCAPIEvent(
     content_type?: 'product' | 'product_group';
     value?: number;         // Value of the content/product
     currency?: string;      // Currency (e.g., USD, BRL)
-    contents?: { id: string; quantity: number; item_price?: number; [key: string]: any }[];
+    contents?: { id: string; quantity: number; item_price?: number; [key: string]: unknown }[];
     num_items?: number;
-    [key: string]: any;     // Allow other custom properties
+    [key: string]: unknown;     // Allow other custom properties
   },
-  piiForEvent?: Partial<Pick<UserData, 'em' | 'ph' | 'fn' | 'ln'>>,
+  piiForEvent?: Partial<UserDataPiiFields>,
   explicitEventId?: string
 ): Promise<CAPIEventResponse> {
   const eventCustomData = {
@@ -279,51 +294,47 @@ export async function sendViewContentCAPIEvent(
   return sendCAPIEvent('ViewContent', 'viewcontent', eventCustomData, piiForEvent, explicitEventId);
 }
 
-// For InitiateCheckout, PII data (especially email, name) is highly recommended.
-export type InitiateCheckoutPII = Required<Pick<UserData, 'em' | 'fn' | 'ln'>> & Partial<Pick<UserData, 'ph'>>; // Ensure em, fn, ln are provided
-
-export async function sendInitiateCheckoutCAPIEvent(
-  customData: {
-    content_category?: string;
-    content_ids?: string[];
-    content_type?: 'product' | 'product_group';
-    num_items?: number;
-    value?: number;
-    currency?: string;
-    contents?: { id: string; quantity: number; item_price?: number; [key: string]: any }[];
-    [key: string]: any;
-  },
-  piiForEvent: InitiateCheckoutPII,
-  explicitEventId?: string
-): Promise<CAPIEventResponse> {
-  const eventCustomData = {
-    currency: DEFAULT_CURRENCY, // Default currency
-    ...customData,
-  };
-  // PII is passed directly to sendCAPIEvent, which will call updateGlobalUserData
-  return sendCAPIEvent('InitiateCheckout', 'initiatecheckout', eventCustomData, piiForEvent, explicitEventId);
+interface InitiateCheckoutCustomData {
+  content_category?: string;
+  content_ids?: string[];
+  content_type?: 'product' | 'product_group';
+  num_items?: number;
+  value?: number;
+  currency?: string;
+  contents?: { id: string; quantity: number; item_price?: number; [key: string]: unknown }[];
+  [key: string]: unknown;
 }
 
-// NEW: sendLeadCAPIEvent function
-export type LeadPII = Required<Pick<UserData, 'em' | 'fn' | 'ln'>> & Partial<Pick<UserData, 'ph'>>;
-
-// Define a more specific type for lead custom data that includes optional contents and num_items
-interface LeadCustomData {
+export interface LeadCustomData { // Ensure this is exported if used elsewhere, or keep local if only here
   content_name?: string;
   content_category?: string;
   value?: number; 
   currency?: string;
-  contents?: { id: string; quantity: number; item_price?: number; [key: string]: any }[];
+  contents?: { id: string; quantity: number; item_price?: number; [key: string]: unknown }[];
   num_items?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
+// RE-EXPORTING InitiateCheckoutPII for clarity and potential direct use, even if checkout-modal uses compatible LeadPII
+export type InitiateCheckoutPII = Required<Pick<UserData, 'em' | 'fn' | 'ln'>> & Partial<Pick<UserData, 'ph'>>;
+
+export async function sendInitiateCheckoutCAPIEvent(
+  customData: InitiateCheckoutCustomData,
+  piiForEvent: InitiateCheckoutPII, // Uses the re-exported/defined type
+  explicitEventId?: string
+): Promise<CAPIEventResponse> {
+  const eventCustomData = { currency: DEFAULT_CURRENCY, ...customData };
+  return sendCAPIEvent('InitiateCheckout', 'initiatecheckout', eventCustomData, piiForEvent, explicitEventId);
+}
+
+export type LeadPII = Required<Pick<UserData, 'em' | 'fn' | 'ln'>> & Partial<Pick<UserData, 'ph'>>;
+
 export async function sendLeadCAPIEvent(
-  customData: LeadCustomData, // Use the more specific type
+  customData: LeadCustomData,
   piiForEvent: LeadPII,
   explicitEventId?: string
 ): Promise<CAPIEventResponse> {
-  const eventCustomData: LeadCustomData = { // Ensure type accommodates contents/num_items
+  const eventCustomData: LeadCustomData = { 
     value: 0, 
     currency: DEFAULT_CURRENCY,
     ...customData,
@@ -331,7 +342,7 @@ export async function sendLeadCAPIEvent(
   
   if (typeof eventCustomData.value !== 'undefined' && !eventCustomData.contents) {
     eventCustomData.contents = [{ 
-      id: eventCustomData.content_name || 'lead_submission', 
+      id: String(eventCustomData.content_name || 'lead_submission'), 
       quantity: 1, 
       item_price: eventCustomData.value 
     }];

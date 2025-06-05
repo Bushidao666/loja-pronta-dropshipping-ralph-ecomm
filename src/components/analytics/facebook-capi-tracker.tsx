@@ -47,8 +47,13 @@ export function FacebookCAPITracker() {
           console.error('[FB CAPI TRACKER] Failed to send PageView CAPI event for:', fullUrl, 'Error:', response.error);
         }
       })
-      .catch((error: any) => { // Catch block error can be typed as 'any' or 'Error'
-        console.error('[FB CAPI TRACKER] Error during sendPageViewCAPIEvent promise:', error);
+      .catch((error: unknown) => { // MODIFIED: error type from any to unknown
+        console.error('[FB CAPI TRACKER] Error during sendPageViewCAPIEvent promise:');
+        if (error instanceof Error) {
+          console.error(error.message);
+        } else {
+          console.error(error);
+        }
       });
 
   }, [pathname, searchParams]); // Re-run effect when path or search params change
