@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Globe, GraduationCap, HeadphonesIcon, CheckCircle, Sparkles, DollarSign, Euro } from 'lucide-react';
+import { Globe, GraduationCap, HeadphonesIcon, CheckCircle, DollarSign, Euro } from 'lucide-react';
 
 export default function Etapa24Page() {
   const components = [
