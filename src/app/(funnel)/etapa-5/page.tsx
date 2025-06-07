@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import { X, Globe, BarChart3, HeadphonesIcon } from 'lucide-react';
 
 export default function Etapa5Page() {
@@ -28,6 +28,24 @@ export default function Etapa5Page() {
     return () => clearInterval(interval);
   }, []);
 
+  const onDragEndNao = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold) {
+      setActiveSlideNao((prev) => Math.min(prev + 1, totalSlidesNao - 1));
+    } else if (info.offset.x > swipeThreshold) {
+      setActiveSlideNao((prev) => Math.max(prev - 1, 0));
+    }
+  };
+
+  const onDragEndE = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold) {
+      setActiveSlideE((prev) => Math.min(prev + 1, totalSlidesE - 1));
+    } else if (info.offset.x > swipeThreshold) {
+      setActiveSlideE((prev) => Math.max(prev - 1, 0));
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex-1 flex flex-col justify-center items-center px-4">
@@ -53,10 +71,14 @@ export default function Etapa5Page() {
             </p>
 
             <div className="relative flex justify-center">
-              <div className="overflow-hidden pb-2 w-full max-w-[240px]">
-                <div 
-                  className="flex transition-transform duration-500 ease-in-out" 
-                  style={{ transform: `translateX(-${activeSlideNao * 100}%)` }}
+              <div className="overflow-hidden pb-2 w-full max-w-[240px] cursor-grab">
+                <motion.div 
+                  className="flex"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={onDragEndNao}
+                  animate={{ x: `-${activeSlideNao * 100}%` }}
+                  transition={{ ease: "easeInOut", duration: 0.5 }}
                 >
                   {/* Card 1 */}
                   <div className="bg-black/30 rounded-lg border-l-4 border-red-500 p-3 w-full flex-shrink-0 flex flex-col justify-between min-h-[160px]">
@@ -102,7 +124,7 @@ export default function Etapa5Page() {
                     </div>
                     <div className="h-2"></div> {/* Espaçador inferior */}
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
             
@@ -125,10 +147,14 @@ export default function Etapa5Page() {
             </h2>
 
             <div className="relative flex justify-center">
-              <div className="overflow-hidden pb-2 w-full max-w-[240px]">
-                <div 
-                  className="flex transition-transform duration-500 ease-in-out" 
-                  style={{ transform: `translateX(-${activeSlideE * 100}%)` }}
+              <div className="overflow-hidden pb-2 w-full max-w-[240px] cursor-grab">
+                <motion.div 
+                  className="flex"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={onDragEndE}
+                  animate={{ x: `-${activeSlideE * 100}%` }}
+                  transition={{ ease: "easeInOut", duration: 0.5 }}
                 >
                   {/* Card 1 */}
                   <div className="bg-black/30 rounded-lg border-l-4 border-green-500 p-3 w-full flex-shrink-0 flex flex-col justify-between min-h-[160px]">
@@ -174,7 +200,7 @@ export default function Etapa5Page() {
                     </div>
                     <div className="h-2"></div> {/* Espaçador inferior */}
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
             

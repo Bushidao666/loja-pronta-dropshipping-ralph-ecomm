@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import Image from 'next/image';
 
 export default function Etapa19Page() {
@@ -35,6 +35,15 @@ export default function Etapa19Page() {
     setActiveSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
   };
 
+  const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold) {
+      nextSlide();
+    } else if (info.offset.x > swipeThreshold) {
+      prevSlide();
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full overflow-hidden">
       <div className="flex-1 flex flex-col justify-center items-center px-2 sm:px-4 py-2 min-h-0">
@@ -56,7 +65,7 @@ export default function Etapa19Page() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex-1 flex flex-col justify-center space-y-4 sm:space-y-5 min-h-0"
           >
-            <div className="relative overflow-hidden rounded-xl flex-1 flex items-center shadow-2xl">
+            <div className="relative overflow-hidden rounded-xl flex-1 flex items-center shadow-2xl cursor-grab">
               {/* Botões de navegação */}
               <button 
                 onClick={prevSlide} 
@@ -68,20 +77,15 @@ export default function Etapa19Page() {
                 </svg>
               </button>
 
-              <button 
-                onClick={nextSlide} 
-                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-black/70 hover:bg-black/90 p-3 sm:p-4 rounded-full transition-all duration-300 shadow-xl"
-                aria-label="Próximo slide"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-
               {/* Slider de imagens */}
-              <div 
-                className="flex transition-transform duration-500 ease-in-out w-full h-full" 
+              <motion.div 
+                className="flex w-full h-full" 
                 style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={onDragEnd}
+                animate={{ x: `-${activeSlide * 100}%` }}
+                transition={{ ease: "easeInOut", duration: 0.5 }}
               >
                 {socialProofImages.map((imagePath, index) => (
                   <div key={index} className="w-full flex-shrink-0 h-full">
@@ -96,7 +100,7 @@ export default function Etapa19Page() {
                     </div>
                   </div>
                 ))}
-              </div>
+              </motion.div>
             </div>
             
             {/* Dots de navegação */}

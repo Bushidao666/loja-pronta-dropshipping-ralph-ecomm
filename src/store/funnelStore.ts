@@ -2,6 +2,7 @@ import { create } from 'zustand';
 // import { persist } from 'zustand/middleware';
 
 export type NicheType = 'home' | 'electronics' | 'fashion' | 'pets' | 'beauty' | 'fitness';
+export type CurrencyType = 'USD' | 'EUR';
 
 export interface Notification {
   id: string;
@@ -10,6 +11,7 @@ export interface Notification {
   price: string;
   timeAgo: string;
   timestamp: number;
+  currency: CurrencyType;
 }
 
 interface FunnelState {
@@ -26,6 +28,8 @@ interface FunnelState {
   
   // Configurações do usuário
   selectedNiche: NicheType | null;
+  selectedCurrency: CurrencyType | null;
+  currencyModalShown: boolean;
   userEmail: string;
   userName: string;
   userPhone: string;
@@ -51,6 +55,8 @@ interface FunnelActions {
   
   // Configurações do usuário
   setSelectedNiche: (niche: NicheType) => void;
+  setSelectedCurrency: (currency: CurrencyType) => void;
+  setCurrencyModalShown: (shown: boolean) => void;
   setUserEmail: (email: string) => void;
   setUserName: (name: string) => void;
   setUserPhone: (phone: string) => void;
@@ -73,6 +79,8 @@ const useFunnelStore = create<FunnelState & FunnelActions>()(
       totalRevenue: 0,
       notifications: [],
       selectedNiche: null,
+      selectedCurrency: null,
+      currencyModalShown: false,
       userEmail: '',
       userName: '',
       userPhone: '',
@@ -134,6 +142,14 @@ const useFunnelStore = create<FunnelState & FunnelActions>()(
         set({ selectedNiche: niche });
       },
       
+      setSelectedCurrency: (currency: CurrencyType) => {
+        set({ selectedCurrency: currency });
+      },
+      
+      setCurrencyModalShown: (shown: boolean) => {
+        set({ currencyModalShown: shown });
+      },
+      
       setUserEmail: (email: string) => {
         set({ userEmail: email });
       },
@@ -157,6 +173,8 @@ const useFunnelStore = create<FunnelState & FunnelActions>()(
           totalRevenue: 0,
           notifications: [],
           selectedNiche: null,
+          selectedCurrency: null,
+          currencyModalShown: false,
           userEmail: '',
           userName: '',
           userPhone: '',

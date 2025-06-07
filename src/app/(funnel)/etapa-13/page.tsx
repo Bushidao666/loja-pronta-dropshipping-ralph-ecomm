@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import Image from 'next/image';
 
 export default function Etapa13() {
@@ -19,6 +19,15 @@ export default function Etapa13() {
   ];
   
   const totalSlides = modules.length;
+
+  const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold) {
+      setActiveSlide((prev) => Math.min(prev + 1, totalSlides - 1));
+    } else if (info.offset.x > swipeThreshold) {
+      setActiveSlide((prev) => Math.max(prev - 1, 0));
+    }
+  };
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -41,10 +50,14 @@ export default function Etapa13() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex-1 flex flex-col justify-center space-y-4 sm:space-y-6"
           >
-            <div className="relative overflow-hidden rounded-xl flex-1 flex items-center">
-              <div 
-                className="flex transition-transform duration-500 ease-in-out w-full h-full" 
-                style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+            <div className="relative overflow-hidden rounded-xl flex-1 flex items-center cursor-grab">
+              <motion.div 
+                className="flex w-full h-full" 
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={onDragEnd}
+                animate={{ x: `-${activeSlide * 100}%` }}
+                transition={{ ease: "easeInOut", duration: 0.5 }}
               >
                 {modules.map((module, index) => (
                   <div 
@@ -62,7 +75,7 @@ export default function Etapa13() {
                     </div>
                   </div>
                 ))}
-              </div>
+              </motion.div>
             </div>
             
             {/* Dots de navegação */}

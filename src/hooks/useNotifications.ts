@@ -1,31 +1,45 @@
 import { useCallback, useEffect, useState } from 'react';
 import useFunnelStore from '@/store/funnelStore';
 
-// Dados simulados para as notificações
+// Dados simulados para as notificações - nomes de gringos
 const buyerNames = [
-  'Maria S.',
-  'João P.',
-  'Ana L.',
-  'Carlos R.',
-  'Juliana M.',
-  'Pedro H.',
-  'Fernanda C.',
-  'Lucas G.',
+  'John M.',
+  'Sarah K.',
+  'Michael R.',
+  'Emily S.',
+  'David W.',
+  'Jessica L.',
+  'Robert H.',
   'Amanda T.',
-  'Roberto V.',
+  'Christopher B.',
+  'Jennifer C.',
+  'Daniel P.',
+  'Laura F.',
+  'Matthew G.',
+  'Ashley N.',
+  'James D.',
+  'Nicole V.',
+  'Andrew Z.',
+  'Michelle A.',
+  'Ryan J.',
+  'Stephanie M.',
 ];
 
 const products = {
-  home: ['Luminária LED', 'Organizador Magnético', 'Purificador de Ar', 'Cadeira Ergonômica', 'Tapete Antiderrapante'],
-  electronics: ['Fone Bluetooth', 'Carregador Portátil', 'Smartwatch', 'Mini Câmera', 'Adaptador Universal'],
-  fashion: ['Bolsa Crossbody', 'Óculos Vintage', 'Relógio Minimalista', 'Colar Ajustável', 'Pulseira Magnética'],
-  pets: ['Escova Automática', 'Comedouro Inteligente', 'Brinquedo Interativo', 'Cama Ortopédica', 'Coleira GPS'],
-  beauty: ['Massageador Facial', 'Sérum Vitamina C', 'Escova Alisadora', 'Máscara LED', 'Depilador Portátil'],
-  fitness: ['Elástico Resistência', 'Rolo Abdominal', 'Garrafa Inteligente', 'Monitor Cardíaco', 'Meia Compressão'],
+  home: ['LED Lamp', 'Magnetic Organizer', 'Air Purifier', 'Ergonomic Chair', 'Non-Slip Mat'],
+  electronics: ['Bluetooth Headphones', 'Portable Charger', 'Smartwatch', 'Mini Camera', 'Universal Adapter'],
+  fashion: ['Crossbody Bag', 'Vintage Sunglasses', 'Minimalist Watch', 'Adjustable Necklace', 'Magnetic Bracelet'],
+  pets: ['Auto Brush', 'Smart Feeder', 'Interactive Toy', 'Orthopedic Bed', 'GPS Collar'],
+  beauty: ['Facial Massager', 'Vitamin C Serum', 'Hair Straightener', 'LED Mask', 'Portable Epilator'],
+  fitness: ['Resistance Band', 'Ab Roller', 'Smart Bottle', 'Heart Monitor', 'Compression Socks'],
 };
 
-const prices = [59.90, 89.90, 129.90, 79.90, 149.90, 99.90, 199.90];
-const timeAgo = ['há 2 min', 'há 5 min', 'há 1 min', 'há 4 min', 'há 3 min', 'agora mesmo', 'há 6 min'];
+const prices = {
+  USD: [39.90, 59.90, 79.90, 49.90, 89.90, 69.90, 129.90],
+  EUR: [36.90, 54.90, 73.90, 45.90, 82.90, 63.90, 119.90]
+};
+
+const timeAgo = ['2 min ago', '5 min ago', '1 min ago', '4 min ago', '3 min ago', 'just now', '6 min ago'];
 
 interface UseNotificationsOptions {
   maxNotifications?: number;
@@ -34,7 +48,7 @@ interface UseNotificationsOptions {
 export default function useNotifications({
   maxNotifications = 15,
 }: UseNotificationsOptions = {}) {
-  const { notifications, addNotification, removeNotification, clearNotifications, selectedNiche, updateRevenue, updateProfit } = useFunnelStore();
+  const { notifications, addNotification, removeNotification, clearNotifications, selectedNiche, selectedCurrency, updateRevenue, updateProfit } = useFunnelStore();
   const [isPaused, setIsPaused] = useState(true); // Sempre pausado
 
   const generateRandomNotification = useCallback(() => {
@@ -45,9 +59,15 @@ export default function useNotifications({
     const productList = products[productCategory];
     const randomProduct = productList[Math.floor(Math.random() * productList.length)];
     
-    const randomPriceIndex = Math.floor(Math.random() * prices.length);
-    const randomPrice = prices[randomPriceIndex];
-    const formattedPrice = `R$ ${randomPrice.toFixed(2).replace('.', ',')}`;
+    // Usar moeda selecionada ou USD como padrão
+    const currency = selectedCurrency || 'USD';
+    const currencyPrices = prices[currency];
+    const randomPriceIndex = Math.floor(Math.random() * currencyPrices.length);
+    const randomPrice = currencyPrices[randomPriceIndex];
+    
+    // Formatar preço baseado na moeda
+    const currencySymbol = currency === 'USD' ? '$' : '€';
+    const formattedPrice = `${currencySymbol}${randomPrice.toFixed(2)}`;
     const randomTimeAgo = timeAgo[Math.floor(Math.random() * timeAgo.length)];
 
     // Atualizar o total de vendas e o lucro simulado
@@ -60,8 +80,9 @@ export default function useNotifications({
       product: randomProduct,
       price: formattedPrice,
       timeAgo: randomTimeAgo,
+      currency: currency,
     });
-  }, [addNotification, selectedNiche, updateRevenue, updateProfit]);
+  }, [addNotification, selectedNiche, selectedCurrency, updateRevenue, updateProfit]);
 
   const pauseNotifications = useCallback(() => {
     setIsPaused(true);
@@ -86,7 +107,7 @@ export default function useNotifications({
       const latestNotification = notifications[notifications.length - 1];
       const timeout = setTimeout(() => {
         removeNotification(latestNotification.id);
-      }, 5000); // Remover após 5 segundos
+      }, 3000); // Remover após 3 segundos
       
       return () => clearTimeout(timeout);
     }

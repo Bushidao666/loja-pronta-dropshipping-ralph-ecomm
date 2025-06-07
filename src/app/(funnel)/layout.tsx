@@ -27,6 +27,7 @@ function NotificationsDisplay() {
             product={notification.product}
             price={notification.price}
             timeAgo={notification.timeAgo}
+            currency={notification.currency}
             onClose={() => removeNotification(notification.id)}
           />
         ) : (
@@ -36,6 +37,7 @@ function NotificationsDisplay() {
             product={notification.product}
             price={notification.price}
             timeAgo={notification.timeAgo}
+            currency={notification.currency}
             onClose={() => removeNotification(notification.id)}
           />
         )

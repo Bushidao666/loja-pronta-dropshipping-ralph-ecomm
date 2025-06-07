@@ -33,7 +33,7 @@ export default function Etapa10Page() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white text-center leading-tight mb-2">
-              Apresentando: <span className="text-green-400">Sistema Drop360°</span> para Conquista Global
+              Apresentando: <span className="text-green-400">Sistema Ecom360°</span> para Conquista Global
             </h1>
           </motion.div>
 

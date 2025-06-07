@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import { ClipboardCheck, DollarSign, Brain } from 'lucide-react';
 
 export default function Etapa4() {
@@ -16,6 +16,15 @@ export default function Etapa4() {
     
     return () => clearInterval(interval);
   }, []);
+
+  const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold) {
+      setActiveSlide((prev) => Math.min(prev + 1, totalSlides - 1));
+    } else if (info.offset.x > swipeThreshold) {
+      setActiveSlide((prev) => Math.max(prev - 1, 0));
+    }
+  };
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -44,10 +53,14 @@ export default function Etapa4() {
             </div>
 
             <div className="relative flex justify-center">
-              <div className="overflow-hidden pb-2 w-full max-w-sm">
-                <div 
-                  className="flex transition-transform duration-500 ease-in-out" 
-                  style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+              <div className="overflow-hidden pb-2 w-full max-w-sm cursor-grab">
+                <motion.div 
+                  className="flex"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={onDragEnd}
+                  animate={{ x: `-${activeSlide * 100}%` }}
+                  transition={{ ease: "easeInOut", duration: 0.5 }}
                 >
                   {/* Card 1: Estrutura profissional */}
                   <div className="bg-black/30 rounded-lg p-4 w-full flex-shrink-0 flex flex-col items-center text-center min-h-[150px] justify-center">
@@ -72,7 +85,7 @@ export default function Etapa4() {
                       Conhecimento aplicado
                     </p>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
 

@@ -6,11 +6,14 @@ import { Clock, X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 
+import { CurrencyType } from '@/store/funnelStore';
+
 interface GlassNotificationProps {
   buyerName: string;
   product: string;
   price: string;
   timeAgo: string;
+  currency: CurrencyType;
   className?: string;
   onClose?: () => void;
 }
@@ -20,6 +23,7 @@ export function GlassNotification({
   product,
   price,
   timeAgo,
+  currency,
   className,
   onClose,
 }: GlassNotificationProps) {
@@ -52,9 +56,11 @@ export function GlassNotification({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <div className="flex h-4 w-4 items-center justify-center rounded-full bg-green-500">
-            <span className="text-[10px] font-bold text-white">$</span>
+            <span className="text-[10px] font-bold text-white">
+              {currency === 'USD' ? '$' : '€'}
+            </span>
           </div>
-          <span className="text-[10px] font-semibold text-green-400">Nova venda!</span>
+          <span className="text-[10px] font-semibold text-green-400">New sale!</span>
         </div>
         
         {onClose && (
@@ -82,7 +88,7 @@ export function GlassNotification({
         
         <div className="flex-1">
           <p className="text-xs font-medium mb-0.5">
-            {buyerName} acabou de comprar
+            {buyerName} just bought
           </p>
           <p className="text-xs font-semibold text-green-400 mb-0.5">
             {product}
@@ -104,7 +110,7 @@ export function GlassNotification({
         <motion.div 
           initial={{ width: 0 }}
           animate={{ width: '100%' }}
-          transition={{ duration: 4 }}
+          transition={{ duration: 3 }}
           className="h-full bg-green-500"
         />
       </div>

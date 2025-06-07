@@ -5,12 +5,14 @@ import { motion } from 'framer-motion';
 import { Clock, X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { CurrencyType } from '@/store/funnelStore';
 
 interface CenterNotificationProps {
   buyerName: string;
   product: string;
   price: string;
   timeAgo: string;
+  currency: CurrencyType;
   className?: string;
   onClose?: () => void;
 }
@@ -20,6 +22,7 @@ export function CenterNotification({
   product,
   price,
   timeAgo,
+  currency,
   className,
   onClose,
 }: CenterNotificationProps) {
@@ -34,13 +37,13 @@ export function CenterNotification({
     }
   }, []);
 
-  // Auto-close após 2 segundos
+  // Auto-close após 3 segundos
   useEffect(() => {
     const timer = setTimeout(() => {
       if (onClose) {
         onClose();
       }
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [onClose]);
@@ -88,9 +91,11 @@ export function CenterNotification({
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
               <div className="flex h-3 w-3 items-center justify-center rounded-full bg-green-500">
-                <span className="text-[8px] font-bold text-white">$</span>
+                <span className="text-[8px] font-bold text-white">
+                  {currency === 'USD' ? '$' : '€'}
+                </span>
               </div>
-              <span className="text-[10px] font-semibold text-green-400 truncate">Nova venda!</span>
+              <span className="text-[10px] font-semibold text-green-400 truncate">New sale!</span>
             </div>
             
             {/* Botão de fechar */}
@@ -107,7 +112,7 @@ export function CenterNotification({
           
           {/* Informações da compra */}
           <p className="text-xs font-medium truncate">
-            {buyerName} <span className="opacity-70">comprou</span> <span className="text-green-400">{product}</span>
+            {buyerName} <span className="opacity-70">bought</span> <span className="text-green-400">{product}</span>
           </p>
           
           {/* Preço e tempo */}
@@ -128,7 +133,7 @@ export function CenterNotification({
         <motion.div 
           initial={{ width: '100%' }}
           animate={{ width: 0 }}
-          transition={{ duration: 2, ease: "linear" }}
+          transition={{ duration: 3, ease: "linear" }}
           className="h-full bg-green-500"
         />
       </div>

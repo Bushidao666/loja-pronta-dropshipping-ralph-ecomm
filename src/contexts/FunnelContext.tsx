@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useCallback, useRef } from 'react';
-import useFunnelStore, { NicheType, Notification } from '@/store/funnelStore';
+import useFunnelStore, { NicheType, CurrencyType, Notification } from '@/store/funnelStore';
 import useNotifications from '@/hooks/useNotifications';
 
 interface FunnelContextType {
@@ -23,6 +23,12 @@ interface FunnelContextType {
   // Seleção de nicho
   selectedNiche: NicheType | null;
   setSelectedNiche: (niche: NicheType) => void;
+  
+  // Seleção de moeda
+  selectedCurrency: CurrencyType | null;
+  setSelectedCurrency: (currency: CurrencyType) => void;
+  currencyModalShown: boolean;
+  setCurrencyModalShown: (shown: boolean) => void;
   
   // Timer
   timerExpired: boolean;
@@ -50,6 +56,10 @@ export function FunnelProvider({ children }: { children: React.ReactNode }) {
     setStep,
     selectedNiche,
     setSelectedNiche,
+    selectedCurrency,
+    setSelectedCurrency,
+    currencyModalShown,
+    setCurrencyModalShown,
     timerExpired,
     setTimerExpired,
     setUserEmail,
@@ -119,6 +129,10 @@ export function FunnelProvider({ children }: { children: React.ReactNode }) {
         addNewNotification,
         selectedNiche,
         setSelectedNiche,
+        selectedCurrency,
+        setSelectedCurrency,
+        currencyModalShown,
+        setCurrencyModalShown,
         timerExpired,
         setTimerExpired,
         setUserEmail,

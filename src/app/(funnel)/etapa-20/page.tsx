@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import { Users, Lightbulb, Truck, BarChart } from 'lucide-react';
 
 export default function Etapa20Page() {
@@ -31,6 +31,15 @@ export default function Etapa20Page() {
     }
   ];
 
+  const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold) {
+      setActiveSlide((prev) => Math.min(prev + 1, totalSlides - 1));
+    } else if (info.offset.x > swipeThreshold) {
+      setActiveSlide((prev) => Math.max(prev - 1, 0));
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full overflow-hidden">
       <div className="flex-1 flex flex-col justify-center items-center px-2 sm:px-4 py-2 min-h-0">
@@ -52,10 +61,14 @@ export default function Etapa20Page() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex-1 flex flex-col justify-center space-y-4 sm:space-y-5 min-h-0"
           >
-            <div className="relative overflow-hidden rounded-xl flex-1 flex items-center shadow-2xl">
-              <div 
-                className="flex transition-transform duration-500 ease-in-out w-full h-full" 
-                style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+            <div className="relative overflow-hidden rounded-xl flex-1 flex items-center shadow-2xl cursor-grab">
+              <motion.div 
+                className="flex w-full h-full"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={onDragEnd}
+                animate={{ x: `-${activeSlide * 100}%` }}
+                transition={{ ease: "easeInOut", duration: 0.5 }}
               >
                 {specialists.map((specialist, index) => (
                   <div 
@@ -69,7 +82,7 @@ export default function Etapa20Page() {
                     <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white text-center leading-relaxed font-medium">{specialist.desc}</p>
                   </div>
                 ))}
-              </div>
+              </motion.div>
             </div>
             
             {/* Dots de navegação */}

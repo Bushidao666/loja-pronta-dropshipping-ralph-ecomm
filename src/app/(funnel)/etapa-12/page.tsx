@@ -56,7 +56,7 @@ export default function Etapa12() {
               className="bg-black/60 py-4 sm:py-5 md:py-6 px-4 sm:px-5 md:px-6 rounded-xl border-l-4 border-green-500 shadow-xl flex-shrink-0"
             >
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white text-center font-bold leading-relaxed">
-                A Loja Drop360° <span className="text-green-400">não é apenas um template:</span>
+                A Loja Ecom360° <span className="text-green-400">não é apenas um template:</span>
               </p>
             </motion.div>
             

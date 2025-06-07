@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GlassNotification } from '@/components/ui/glass-notification';
 import { CenterNotification } from '@/components/ui/center-notification';
 import { CheckoutModal } from '@/components/ui/checkout-modal';
+import { CurrencySelectionModal } from '@/components/ui/currency-selection-modal';
 import { GlassStepNavigation } from '@/components/ui/glass-step-navigation';
 import { fbPixelTrack } from '@/components/analytics/facebook-pixel';
-import { Users, LineChart, ShoppingCart } from 'lucide-react';
+import { LineChart, ShoppingCart } from 'lucide-react';
 
 // Importações dinâmicas de cada etapa
 import Etapa1 from './(funnel)/etapa-1/page';
@@ -52,6 +53,7 @@ function NotificationsDisplay() {
             product={notification.product}
             price={notification.price}
             timeAgo={notification.timeAgo}
+            currency={notification.currency}
             onClose={() => removeNotification(notification.id)}
           />
         ) : (
@@ -61,6 +63,7 @@ function NotificationsDisplay() {
             product={notification.product}
             price={notification.price}
             timeAgo={notification.timeAgo}
+            currency={notification.currency}
             onClose={() => removeNotification(notification.id)}
           />
         )
@@ -69,148 +72,140 @@ function NotificationsDisplay() {
   );
 }
 
-// Componente para o indicador "Live" pulsante
-function LiveIndicator() {
-  return (
-    <div className="flex items-center">
-      <motion.div
-        animate={{ 
-          boxShadow: ['0 0 3px 0 #3b82f6', '0 0 7px 2px #3b82f6', '0 0 3px 0 #3b82f6'],
-          backgroundColor: ['#3b82f6', '#60a5fa', '#3b82f6']
-        }}
-        transition={{ 
-          repeat: Infinity, 
-          duration: 2,
-          ease: "easeInOut"
-        }}
-        className="h-2 w-2 bg-blue-500 rounded-full mr-1"
-      />
-      <span className="text-[10px] sm:text-xs text-blue-400 font-medium">LIVE</span>
-    </div>
-  );
-}
+
 
 // Header sticky com dashboard estilo Shopify
 function StickyHeader() {
-  const { totalRevenue, simulatedProfit } = useFunnel();
-  const [visitors, setVisitors] = useState(0);
-  const [growthRevenue, setGrowthRevenue] = useState(8.4);
-  const [growthProfit, setGrowthProfit] = useState(12.7);
+  const { totalRevenue, selectedCurrency } = useFunnel();
   
-  // Simular acessos na loja
-  useEffect(() => {
-    const initialVisitors = Math.floor(Math.random() * 30) + 15; // 15-45 visitantes iniciais
-    setVisitors(initialVisitors);
-    
-    const interval = setInterval(() => {
-      setVisitors(prev => {
-        // Adiciona 1-3 visitantes a cada 30 segundos
-        const newVisitors = prev + Math.floor(Math.random() * 3) + 1;
-        return newVisitors;
-      });
-    }, 30000);
-    
-    return () => clearInterval(interval);
-  }, []);
+
   
-  // Simular alterações nas % de crescimento quando os valores mudam
-  useEffect(() => {
-    if (totalRevenue > 0) {
-      const newGrowth = 8.4 + (Math.random() * 3);
-      setGrowthRevenue(parseFloat(newGrowth.toFixed(1)));
-    }
-    
-    if (simulatedProfit > 0) {
-      const newGrowth = 12.7 + (Math.random() * 4);
-      setGrowthProfit(parseFloat(newGrowth.toFixed(1)));
-    }
-  }, [totalRevenue, simulatedProfit]);
-  
-  // Formatar valor monetário
+  // Formatar valor monetário baseado na moeda selecionada
   const formatCurrency = (value: number) => {
+    const currency = selectedCurrency || 'USD';
+    
+    if (currency === 'USD') {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(value);
+    } else {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+      }).format(value);
+    }
+  };
+
+  // Converter para reais (cotações aproximadas)
+  const convertToReais = (value: number) => {
+    const currency = selectedCurrency || 'USD';
+    let valueInReais = value;
+    
+    if (currency === 'USD') {
+      valueInReais = value * 5.2; // 1 USD ≈ 5.20 BRL
+    } else if (currency === 'EUR') {
+      valueInReais = value * 5.8; // 1 EUR ≈ 5.80 BRL
+    }
+    
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    }).format(value);
+    }).format(valueInReais);
   };
   
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-black/30 border-b border-white/10">
-      <div className="container mx-auto px-2 py-3 sm:px-4 sm:py-4 md:py-5">
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-3xl mx-auto">
-          {/* Visitantes online com indicador LIVE */}
-          <motion.div 
-            whileHover={{ scale: 1.03, y: -2 }}
-            transition={{ type: "spring", stiffness: 500, damping: 15 }}
-            className="flex flex-col justify-between h-16 sm:h-18 bg-gradient-to-br from-blue-500/20 to-blue-600/5 px-2 py-2 sm:p-3 rounded-md border border-blue-500/20 shadow-sm hover:shadow-blue-500/10"
-          >
-            <div className="flex items-center justify-between">
-              <LiveIndicator />
-            </div>
-            <div className="flex items-center justify-center">
-              <Users className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400" />
-              <motion.span 
-                key={visitors}
-                initial={{ opacity: 0.5, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-xs sm:text-sm text-white ml-1"
-              >
-                <span className="font-medium text-blue-400">{visitors}</span> online
-              </motion.span>
-            </div>
-          </motion.div>
+      <div className="container mx-auto px-3 py-4 sm:px-6 sm:py-6 md:py-7">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 w-full max-w-2xl mx-auto">
           
           {/* Total de vendas */}
           <motion.div 
-            whileHover={{ scale: 1.03, y: -2 }}
-            transition={{ type: "spring", stiffness: 500, damping: 15 }}
-            className="flex flex-col justify-between h-16 sm:h-18 bg-gradient-to-br from-green-500/20 to-green-600/5 px-2 py-2 sm:p-3 rounded-md border border-green-500/20 shadow-sm hover:shadow-green-500/10"
+            whileHover={{ scale: 1.02, y: -3 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            className="relative overflow-hidden bg-gradient-to-br from-green-500/25 to-green-600/10 backdrop-blur-sm border border-green-500/30 rounded-xl p-4 sm:p-5 shadow-lg hover:shadow-green-500/20 transition-all duration-300"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] sm:text-[10px] text-green-400 font-medium leading-none">FATURAMENTO</span>
-              {totalRevenue > 0 && (
-                <span className="text-[9px] sm:text-[10px] text-green-400 font-medium leading-none ml-1">
-                  +{growthRevenue}%
-                </span>
-              )}
-            </div>
-            <div className="flex items-center justify-center">
-              <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 text-green-400" />
-              <motion.span 
-                key={totalRevenue}
-                initial={{ opacity: 0.5, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-xs sm:text-sm text-white font-medium ml-1"
-              >
-                {formatCurrency(totalRevenue || 0)}
-              </motion.span>
+            <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+            
+            <div className="relative">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs sm:text-sm text-green-400 font-semibold tracking-wide">FATURAMENTO</span>
+                {totalRevenue > 0 && (
+                  <div className="px-2 py-0.5 bg-green-500/20 rounded-full border border-green-500/30">
+                    <span className="text-xs text-green-300 font-medium">
+                      {selectedCurrency || 'USD'}
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 p-2 bg-green-500/20 rounded-lg border border-green-500/30">
+                  <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
+                </div>
+                <motion.div 
+                  key={totalRevenue}
+                  initial={{ opacity: 0.5, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  className="flex-1"
+                >
+                  <div className={`text-lg sm:text-xl lg:text-2xl font-bold leading-tight ${totalRevenue > 0 ? 'text-white' : 'text-gray-400'}`}>
+                    {formatCurrency(totalRevenue || 0)}
+                  </div>
+                  {totalRevenue === 0 && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      Aguardando vendas...
+                    </div>
+                  )}
+                </motion.div>
+              </div>
             </div>
           </motion.div>
           
-          {/* Lucro */}
+          {/* Valor em Reais */}
           <motion.div 
-            whileHover={{ scale: 1.03, y: -2 }}
-            transition={{ type: "spring", stiffness: 500, damping: 15 }}
-            className="flex flex-col justify-between h-16 sm:h-18 bg-gradient-to-br from-purple-500/20 to-purple-600/5 px-2 py-2 sm:p-3 rounded-md border border-purple-500/20 shadow-sm hover:shadow-purple-500/10"
+            whileHover={{ scale: 1.02, y: -3 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            className="relative overflow-hidden bg-gradient-to-br from-purple-500/25 to-purple-600/10 backdrop-blur-sm border border-purple-500/30 rounded-xl p-4 sm:p-5 shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] sm:text-[10px] text-purple-400 font-medium leading-none">LUCRO</span>
-              {simulatedProfit > 0 && (
-                <span className="text-[9px] sm:text-[10px] text-purple-400 font-medium leading-none ml-1">
-                  +{growthProfit}%
-                </span>
-              )}
-            </div>
-            <div className="flex items-center justify-center">
-              <LineChart className="h-3 w-3 sm:h-4 sm:w-4 text-purple-400" />
-              <motion.span 
-                key={simulatedProfit}
-                initial={{ opacity: 0.5, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-xs sm:text-sm text-white font-medium ml-1"
-              >
-                {formatCurrency(simulatedProfit || 0)}
-              </motion.span>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+            
+            <div className="relative">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs sm:text-sm text-purple-400 font-semibold tracking-wide">EM REAIS</span>
+                {totalRevenue > 0 && (
+                  <div className="px-2 py-0.5 bg-purple-500/20 rounded-full border border-purple-500/30">
+                    <span className="text-xs text-purple-300 font-medium">
+                      BRL
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 p-2 bg-purple-500/20 rounded-lg border border-purple-500/30">
+                  <LineChart className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400" />
+                </div>
+                <motion.div 
+                  key={totalRevenue}
+                  initial={{ opacity: 0.5, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  className="flex-1"
+                >
+                  <div className={`text-lg sm:text-xl lg:text-2xl font-bold leading-tight ${totalRevenue > 0 ? 'text-white' : 'text-gray-400'}`}>
+                    {convertToReais(totalRevenue || 0)}
+                  </div>
+                  {totalRevenue === 0 && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      Convertendo...
+                    </div>
+                  )}
+                </motion.div>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -395,8 +390,16 @@ function DynamicStep() {
 }
 
 export default function HomePage() {
-  const { currentStep } = useFunnel();
+  const { currentStep, selectedCurrency, currencyModalShown } = useFunnel();
+  const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   
+  // Mostrar modal de seleção de moeda se ainda não foi mostrado
+  useEffect(() => {
+    if (!selectedCurrency && !currencyModalShown) {
+      setShowCurrencyModal(true);
+    }
+  }, [selectedCurrency, currencyModalShown]);
+
   // Disparar ViewContent quando chegar na etapa 21
   useEffect(() => {
     if (currentStep === 21) {
@@ -429,6 +432,12 @@ export default function HomePage() {
       {/* Notificações e footer */}
       <NotificationsDisplay />
       <StickyFooter />
+
+      {/* Modal de seleção de moeda */}
+      <CurrencySelectionModal 
+        isOpen={showCurrencyModal}
+        onClose={() => setShowCurrencyModal(false)}
+      />
     </div>
   );
 } 
