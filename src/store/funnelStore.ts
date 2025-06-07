@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+// import { persist } from 'zustand/middleware';
 
 export type NicheType = 'home' | 'electronics' | 'fashion' | 'pets' | 'beauty' | 'fitness';
 
@@ -64,7 +64,7 @@ interface FunnelActions {
 
 // Create the store
 const useFunnelStore = create<FunnelState & FunnelActions>()(
-  persist(
+  // persist(
     (set, get) => ({
       // Estado inicial
       currentStep: 1,
@@ -164,10 +164,10 @@ const useFunnelStore = create<FunnelState & FunnelActions>()(
         });
       },
     }),
-    {
-      name: 'funnel-store',
-    }
-  )
+    // {
+    //   name: 'funnel-store',
+    // }
+  // )
 );
 
 export default useFunnelStore; 
