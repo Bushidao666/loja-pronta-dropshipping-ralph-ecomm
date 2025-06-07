@@ -116,34 +116,34 @@ function StickyHeader() {
   
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-black/30 border-b border-white/10">
-      <div className="container mx-auto px-3 py-4 sm:px-6 sm:py-6 md:py-7">
-        <div className="grid grid-cols-2 gap-3 sm:gap-6 w-full max-w-2xl mx-auto">
+      <div className="container mx-auto px-2 py-1.5 sm:px-3 sm:py-2 md:py-2.5">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 w-full max-w-2xl mx-auto">
           
           {/* Total de vendas */}
           <motion.div 
             whileHover={{ scale: 1.02, y: -3 }}
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            className="relative overflow-hidden bg-gradient-to-br from-green-500/25 to-green-600/10 backdrop-blur-sm border border-green-500/30 rounded-xl p-4 sm:p-5 shadow-lg hover:shadow-green-500/20 transition-all duration-300"
+            className="relative overflow-hidden bg-gradient-to-br from-green-500/25 to-green-600/10 backdrop-blur-sm border border-green-500/30 rounded-lg p-2 sm:p-3 shadow-lg hover:shadow-green-500/20 transition-all duration-300"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
             
             <div className="relative">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs sm:text-sm text-green-400 font-semibold tracking-wide">FATURAMENTO</span>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs text-green-400/70 font-normal tracking-wide">FATURAMENTO</span>
                 {totalRevenue > 0 && (
-                  <div className="px-2 py-0.5 bg-green-500/20 rounded-full border border-green-500/30">
-                    <span className="text-xs text-green-300 font-medium">
-                      {selectedCurrency || 'USD'}
-                    </span>
-                  </div>
+                                      <div className="px-1.5 py-0.5 bg-green-500/20 rounded-full border border-green-500/30">
+                      <span className="text-xs text-green-300 font-normal">
+                        {selectedCurrency || 'USD'}
+                      </span>
+                    </div>
                 )}
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 p-2 bg-green-500/20 rounded-lg border border-green-500/30">
-                  <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
-                </div>
+                              <div className="flex items-center gap-2">
+                  <div className="flex-shrink-0 p-1 bg-green-500/20 rounded-lg border border-green-500/30">
+                    <ShoppingCart className="h-4 w-4 text-green-400" />
+                  </div>
                 <motion.div 
                   key={totalRevenue}
                   initial={{ opacity: 0.5, scale: 0.9 }}
@@ -151,11 +151,11 @@ function StickyHeader() {
                   transition={{ type: "spring", stiffness: 300, damping: 15 }}
                   className="flex-1"
                 >
-                  <div className={`text-lg sm:text-xl lg:text-2xl font-bold leading-tight ${totalRevenue > 0 ? 'text-white' : 'text-gray-400'}`}>
+                  <div className={`text-lg sm:text-xl lg:text-2xl font-black leading-tight ${totalRevenue > 0 ? 'text-white' : 'text-gray-400'}`}>
                     {formatCurrency(totalRevenue || 0)}
                   </div>
                   {totalRevenue === 0 && (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-500 mt-0.5">
                       Aguardando vendas...
                     </div>
                   )}
@@ -169,26 +169,26 @@ function StickyHeader() {
             whileHover={{ scale: 1.02, y: -3 }}
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            className="relative overflow-hidden bg-gradient-to-br from-purple-500/25 to-purple-600/10 backdrop-blur-sm border border-purple-500/30 rounded-xl p-4 sm:p-5 shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+            className="relative overflow-hidden bg-gradient-to-br from-purple-500/25 to-purple-600/10 backdrop-blur-sm border border-purple-500/30 rounded-lg p-2 sm:p-3 shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
             
             <div className="relative">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs sm:text-sm text-purple-400 font-semibold tracking-wide">EM REAIS</span>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs text-purple-400/70 font-normal tracking-wide">EM REAIS</span>
                 {totalRevenue > 0 && (
-                  <div className="px-2 py-0.5 bg-purple-500/20 rounded-full border border-purple-500/30">
-                    <span className="text-xs text-purple-300 font-medium">
-                      BRL
-                    </span>
-                  </div>
+                                      <div className="px-1.5 py-0.5 bg-purple-500/20 rounded-full border border-purple-500/30">
+                      <span className="text-xs text-purple-300 font-normal">
+                        BRL
+                      </span>
+                    </div>
                 )}
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 p-2 bg-purple-500/20 rounded-lg border border-purple-500/30">
-                  <LineChart className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400" />
-                </div>
+                              <div className="flex items-center gap-2">
+                  <div className="flex-shrink-0 p-1 bg-purple-500/20 rounded-lg border border-purple-500/30">
+                    <LineChart className="h-4 w-4 text-purple-400" />
+                  </div>
                 <motion.div 
                   key={totalRevenue}
                   initial={{ opacity: 0.5, scale: 0.9 }}
@@ -196,11 +196,11 @@ function StickyHeader() {
                   transition={{ type: "spring", stiffness: 300, damping: 15 }}
                   className="flex-1"
                 >
-                  <div className={`text-lg sm:text-xl lg:text-2xl font-bold leading-tight ${totalRevenue > 0 ? 'text-white' : 'text-gray-400'}`}>
+                  <div className={`text-lg sm:text-xl lg:text-2xl font-black leading-tight ${totalRevenue > 0 ? 'text-white' : 'text-gray-400'}`}>
                     {convertToReais(totalRevenue || 0)}
                   </div>
                   {totalRevenue === 0 && (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-500 mt-0.5">
                       Convertendo...
                     </div>
                   )}
