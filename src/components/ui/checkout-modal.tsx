@@ -6,7 +6,6 @@ import { X, User, Mail, Phone, CreditCard } from 'lucide-react';
 import { Button } from './button';
 import { cn } from '@/lib/utils';
 import useFunnelStore from '@/store/funnelStore';
-import { config } from '@/lib/config';
 // import { fbPixelTrack } from '@/components/analytics/facebook-pixel'; // fbPixelTrack.lead not used directly with eventID
 import {
   sendInitiateCheckoutCAPIEvent,
