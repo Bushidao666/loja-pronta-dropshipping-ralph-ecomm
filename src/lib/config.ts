@@ -1,6 +1,6 @@
 // Configuration file for environment variables
 export const config = {
-  // Checkout Configuration
+  // Checkout Configuration - URL base (será substituída pelo A/B test quando ativo)
   checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL || 'https://pay.kiwify.com.br/FHihMEs',
   
   // Facebook Pixel Configuration

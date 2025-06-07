@@ -15,6 +15,7 @@ import {
   generateUUID, // Added import for generating event IDs
   getUrlParameters // Added import for getting URL parameters
 } from '@/lib/fb-capi-service';
+import { abTestService } from '@/lib/abTestService';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -93,6 +94,12 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       ph: [formData.phone.replace(/\D/g, '')],
     };
 
+    // --- Obter URL de checkout via A/B Test ---
+    const checkoutResult = abTestService.getCheckoutUrl();
+    
+    // Rastrear início do checkout no A/B test
+    abTestService.trackCheckoutInitiated();
+    
     // --- InitiateCheckout Event (Pixel & CAPI) --- 
     const initiateCheckoutEventId = generateUUID();
     const productDetailsForPixelAndCAPI = {
@@ -175,11 +182,13 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         kiwifyParams.append('fbclid', currentPageParams.fbclid);
     }
     
-    const checkoutUrl = `${config.checkoutUrl}?${kiwifyParams.toString()}`;
-    console.log('[MODAL] Redirecting to Kiwify URL:', checkoutUrl);
+    // Usar URL do A/B test em vez da URL fixa
+    const finalCheckoutUrl = `${checkoutResult.checkoutUrl}?${kiwifyParams.toString()}`;
+    console.log('[MODAL] Redirecting to checkout URL:', finalCheckoutUrl);
+    console.log('[AB TEST] Using variant:', checkoutResult.variantId, 'Is test:', checkoutResult.isTest);
     
     setTimeout(() => {
-      window.location.href = checkoutUrl;
+      window.location.href = finalCheckoutUrl;
       // setIsSubmitting(false); // Consider if modal can be re-opened and re-submitted before redirect
     }, 1000); 
   };
