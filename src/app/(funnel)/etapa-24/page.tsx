@@ -36,22 +36,7 @@ export default function Etapa24Page() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Desabilitar scroll vertical da página
-  useEffect(() => {
-    // Salvar estado original do overflow
-    const originalOverflow = document.body.style.overflow;
-    const originalHtmlOverflow = document.documentElement.style.overflow;
-    
-    // Desabilitar scroll vertical
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    
-    // Cleanup: restaurar scroll ao sair da página
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      document.documentElement.style.overflow = originalHtmlOverflow;
-    };
-  }, []);
+
 
   // Autoplay do carrossel (pausa quando está arrastando)
   useEffect(() => {
