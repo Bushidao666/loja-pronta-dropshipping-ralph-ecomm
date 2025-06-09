@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Ban, AlertTriangle, PiggyBank, Clock, TrendingDown } from 'lucide-react';
+import { Ban, PiggyBank, Clock, TrendingDown } from 'lucide-react';
 
 export default function Etapa17Page() {
   const selfLearningCosts = [
