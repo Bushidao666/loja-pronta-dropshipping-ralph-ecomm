@@ -9,7 +9,6 @@ import { CheckoutModal } from '@/components/ui/checkout-modal';
 import { CurrencySelectionModal } from '@/components/ui/currency-selection-modal';
 import { GlassStepNavigation } from '@/components/ui/glass-step-navigation';
 import { fbPixelTrack } from '@/components/analytics/facebook-pixel';
-import { LineChart, ShoppingCart } from 'lucide-react';
 
 // Importações dinâmicas de cada etapa
 import Etapa1 from './(funnel)/etapa-1/page';
@@ -115,96 +114,118 @@ function StickyHeader() {
   };
   
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-black/30 border-b border-white/10">
-      <div className="container mx-auto px-2 py-1.5 sm:px-3 sm:py-2 md:py-2.5">
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 w-full max-w-2xl mx-auto">
+    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-black/40 border-b border-white/20">
+      <div className="container mx-auto px-1 py-0.5 sm:px-2 sm:py-0.5">
+        <div className="grid grid-cols-2 gap-1 w-full max-w-lg mx-auto">
           
           {/* Total de vendas */}
           <motion.div 
-            whileHover={{ scale: 1.02, y: -3 }}
+            whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            className="relative overflow-hidden bg-gradient-to-br from-green-500/25 to-green-600/10 backdrop-blur-sm border border-green-500/30 rounded-lg p-2 sm:p-3 shadow-lg hover:shadow-green-500/20 transition-all duration-300"
+            animate={totalRevenue > 0 ? {
+              scale: [1, 1.01, 1],
+              borderColor: ["rgba(34, 197, 94, 0.4)", "rgba(34, 197, 94, 0.8)", "rgba(34, 197, 94, 0.4)"]
+            } : {}}
+            transition={totalRevenue > 0 ? {
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            } : {}}
+            className="relative overflow-hidden bg-gradient-to-br from-green-500/30 to-green-600/15 backdrop-blur-sm border border-green-500/40 rounded p-0.5 sm:p-1 shadow-md hover:shadow-green-500/25 transition-all duration-200"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
             
-            <div className="relative">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs text-green-400/70 font-normal tracking-wide">FATURAMENTO</span>
+                        <div className="relative h-full flex items-center justify-center">
+              <div className="flex items-center justify-center">
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-white font-medium tracking-tight">VENDAS:</span>
+                  <motion.div 
+                    key={totalRevenue}
+                    initial={{ opacity: 0.5, x: 5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  >
+                    <motion.span 
+                      animate={totalRevenue > 0 ? {
+                        scale: [1, 1.05, 1],
+                      } : {}}
+                      transition={totalRevenue > 0 ? {
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      } : {}}
+                      className={`text-sm font-black transition-colors duration-300 ${
+                        totalRevenue > 0 
+                          ? 'text-green-200' 
+                          : 'text-gray-400'
+                      }`}
+                    >
+                      {formatCurrency(totalRevenue || 0)}
+                    </motion.span>
+                  </motion.div>
+                </div>
                 {totalRevenue > 0 && (
-                                      <div className="px-1.5 py-0.5 bg-green-500/20 rounded-full border border-green-500/30">
-                      <span className="text-xs text-green-300 font-normal">
-                        {selectedCurrency || 'USD'}
-                      </span>
-                    </div>
+                  <div className="ml-2 px-1 py-0 bg-green-400/25 rounded text-xs text-green-200 font-bold border border-green-400/40">
+                    {selectedCurrency || 'USD'}
+                  </div>
                 )}
-              </div>
-              
-                              <div className="flex items-center gap-2">
-                  <div className="flex-shrink-0 p-1 bg-green-500/20 rounded-lg border border-green-500/30">
-                    <ShoppingCart className="h-4 w-4 text-green-400" />
-                  </div>
-                <motion.div 
-                  key={totalRevenue}
-                  initial={{ opacity: 0.5, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                  className="flex-1"
-                >
-                  <div className={`text-lg sm:text-xl lg:text-2xl font-black leading-tight ${totalRevenue > 0 ? 'text-white' : 'text-gray-400'}`}>
-                    {formatCurrency(totalRevenue || 0)}
-                  </div>
-                  {totalRevenue === 0 && (
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      Aguardando vendas...
-                    </div>
-                  )}
-                </motion.div>
               </div>
             </div>
           </motion.div>
           
           {/* Valor em Reais */}
           <motion.div 
-            whileHover={{ scale: 1.02, y: -3 }}
+            whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            className="relative overflow-hidden bg-gradient-to-br from-purple-500/25 to-purple-600/10 backdrop-blur-sm border border-purple-500/30 rounded-lg p-2 sm:p-3 shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+            animate={totalRevenue > 0 ? {
+              scale: [1, 1.01, 1],
+              borderColor: ["rgba(168, 85, 247, 0.4)", "rgba(168, 85, 247, 0.8)", "rgba(168, 85, 247, 0.4)"]
+            } : {}}
+            transition={totalRevenue > 0 ? {
+              duration: 2.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.7
+            } : {}}
+            className="relative overflow-hidden bg-gradient-to-br from-purple-500/30 to-purple-600/15 backdrop-blur-sm border border-purple-500/40 rounded p-0.5 sm:p-1 shadow-md hover:shadow-purple-500/25 transition-all duration-200"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
             
-            <div className="relative">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs text-purple-400/70 font-normal tracking-wide">EM REAIS</span>
+                        <div className="relative h-full flex items-center justify-center">
+              <div className="flex items-center justify-center">
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-white font-medium tracking-tight">REAIS:</span>
+                  <motion.div 
+                    key={totalRevenue}
+                    initial={{ opacity: 0.5, x: 5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  >
+                    <motion.span 
+                      animate={totalRevenue > 0 ? {
+                        scale: [1, 1.05, 1],
+                      } : {}}
+                      transition={totalRevenue > 0 ? {
+                        duration: 1.8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.4
+                      } : {}}
+                      className={`text-sm font-black transition-colors duration-300 ${
+                        totalRevenue > 0 
+                          ? 'text-purple-200' 
+                          : 'text-gray-400'
+                      }`}
+                    >
+                      {convertToReais(totalRevenue || 0)}
+                    </motion.span>
+                  </motion.div>
+                </div>
                 {totalRevenue > 0 && (
-                                      <div className="px-1.5 py-0.5 bg-purple-500/20 rounded-full border border-purple-500/30">
-                      <span className="text-xs text-purple-300 font-normal">
-                        BRL
-                      </span>
-                    </div>
+                  <div className="ml-2 px-1 py-0 bg-purple-400/25 rounded text-xs text-purple-200 font-bold border border-purple-400/40">
+                    BRL
+                  </div>
                 )}
-              </div>
-              
-                              <div className="flex items-center gap-2">
-                  <div className="flex-shrink-0 p-1 bg-purple-500/20 rounded-lg border border-purple-500/30">
-                    <LineChart className="h-4 w-4 text-purple-400" />
-                  </div>
-                <motion.div 
-                  key={totalRevenue}
-                  initial={{ opacity: 0.5, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                  className="flex-1"
-                >
-                  <div className={`text-lg sm:text-xl lg:text-2xl font-black leading-tight ${totalRevenue > 0 ? 'text-white' : 'text-gray-400'}`}>
-                    {convertToReais(totalRevenue || 0)}
-                  </div>
-                  {totalRevenue === 0 && (
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      Convertendo...
-                    </div>
-                  )}
-                </motion.div>
               </div>
             </div>
           </motion.div>
