@@ -89,31 +89,6 @@ export default function Etapa17Page() {
                 <span className="text-red-400 text-lg sm:text-xl md:text-2xl">Total: R$9.500+</span> sem garantia
               </p>
             </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 1.0 }}
-              className="bg-black/60 py-4 sm:py-5 md:py-6 px-4 sm:px-5 md:px-6 rounded-xl border-l-4 border-green-500 shadow-xl flex-shrink-0"
-            >
-              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                <AlertTriangle className="h-6 w-6 sm:h-7 sm:w-7 text-green-400" />
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white text-center font-bold leading-relaxed">
-                  Investimento no Drop360°: <span className="text-green-400 text-lg sm:text-xl md:text-2xl">apenas R$97</span>
-                </p>
-              </div>
-              <ul className="space-y-2 sm:space-y-3">
-                <li className="text-sm sm:text-base md:text-lg text-white flex items-center justify-center leading-relaxed">
-                  <span className="text-green-400 mr-2 sm:mr-3 text-lg sm:text-xl">✓</span> Fundação técnica validada
-                </li>
-                <li className="text-sm sm:text-base md:text-lg text-white flex items-center justify-center leading-relaxed">
-                  <span className="text-green-400 mr-2 sm:mr-3 text-lg sm:text-xl">✓</span> Estratégia comprovada
-                </li>
-                <li className="text-sm sm:text-base md:text-lg text-white flex items-center justify-center leading-relaxed">
-                  <span className="text-green-400 mr-2 sm:mr-3 text-lg sm:text-xl">✓</span> Suporte especializado
-                </li>
-              </ul>
-            </motion.div>
           </motion.div>
         </div>
       </div>
