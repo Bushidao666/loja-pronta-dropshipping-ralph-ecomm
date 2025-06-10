@@ -58,6 +58,12 @@ function getFbclidFromUrl(): string | undefined {
   return urlParams.fbclid;
 }
 
+function createFbcFromFbclid(fbclid: string): string {
+    const creationTime = Date.now();
+    // The version is 'fb', subdomain index is '1'. This is the standard format.
+    return `fb.1.${creationTime}.${fbclid}`;
+}
+
 // --- User Data Management ---
 // UserData interface stores raw PII. Server will hash.
 export interface UserDataPiiFields {
@@ -78,10 +84,11 @@ export let globalUserData: UserData = {};
 
 // Initialize globalUserData safely for client-side execution
 if (typeof window !== 'undefined') {
+    const fbclid = getFbclidFromUrl();
     globalUserData = {
         external_id: [getExternalId()],
         fbp: getCookie('_fbp'),
-        fbc: getCookie('_fbc') || getFbclidFromUrl(),
+        fbc: getCookie('_fbc') || (fbclid ? createFbcFromFbclid(fbclid) : undefined),
     };
 }
 
@@ -93,18 +100,20 @@ export function loadUserDataFromLocalStorage(): void {
     if (stored) {
       const data = JSON.parse(stored) as Partial<UserData>;
       // Merge stored data, prioritizing fresh values for fbp/fbc if available
+      const fbclid = getFbclidFromUrl();
       globalUserData = {
         ...globalUserData, // Default initial values
         ...data,           // Overwrite with stored values
         external_id: data.external_id || globalUserData.external_id || [getExternalId()],
         fbp: data.fbp || globalUserData.fbp || getCookie('_fbp'),
-        fbc: data.fbc || globalUserData.fbc || getCookie('_fbc') || getFbclidFromUrl(),
+        fbc: data.fbc || globalUserData.fbc || getCookie('_fbc') || (fbclid ? createFbcFromFbclid(fbclid) : undefined),
       };
     } else {
         // Ensure critical IDs are set if nothing in localStorage
+        const fbclid = getFbclidFromUrl();
         globalUserData.external_id = globalUserData.external_id || [getExternalId()];
         globalUserData.fbp = globalUserData.fbp || getCookie('_fbp');
-        globalUserData.fbc = globalUserData.fbc || getCookie('_fbc') || getFbclidFromUrl();
+        globalUserData.fbc = globalUserData.fbc || getCookie('_fbc') || (fbclid ? createFbcFromFbclid(fbclid) : undefined);
         localStorage.setItem('fb_user_data', JSON.stringify(globalUserData));
     }
   } catch (error: unknown) {
@@ -370,12 +379,12 @@ export function initializeFBCAPIService(): void {
     const currentFbclid = getFbclidFromUrl();
     const cookieFbc = getCookie('_fbc');
     if (currentFbclid) {
-        // If fbclid in URL, it's the most current context for fbc for *this* page hit.
-        // globalUserData.fbc might hold an older cookie value or an fbclid from a previous page.
-        // The backend logic (as per README) correctly prioritizes `fbclid` from `urlParameters`.
-        // So, ensure globalUserData.fbc is at least initialized from cookie if available.
-        globalUserData.fbc = cookieFbc || currentFbclid;
+        // If a new fbclid is in the URL, it's the most relevant one.
+        // We create a new fbc value. The backend will still get the raw fbclid
+        // in urlParameters for its logic, but our client-side fbc is now correctly formatted.
+        globalUserData.fbc = cookieFbc || createFbcFromFbclid(currentFbclid);
     } else if (cookieFbc) {
+        // If no fbclid in URL, stick with the one from the cookie.
         globalUserData.fbc = cookieFbc;
     }
 
