@@ -179,6 +179,42 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     
     // Usar URL do A/B test em vez da URL fixa
     const finalCheckoutUrl = `${checkoutResult.checkoutUrl}?${kiwifyParams.toString()}`;
+    
+    // --- Send data to custom webhook ---
+    const webhookUrl = process.env.NEXT_PUBLIC_CHECKOUT_WEBHOOK_URL;
+    if (webhookUrl) {
+      const webhookPayload = {
+        timestamp: new Date().toISOString(),
+        formData: formData,
+        piiForEvents: piiPayload,
+        eventIds: {
+          initiateCheckout: initiateCheckoutEventId,
+          lead: leadEventId,
+        },
+        productDetails: productDetailsForPixelAndCAPI,
+        trackingParameters: allTrackableParams,
+        abTestInfo: checkoutResult,
+        finalCheckoutUrl: finalCheckoutUrl,
+      };
+
+      // Send to webhook without waiting to avoid delaying the redirect
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookPayload),
+      }).then(response => {
+        if (response.ok) {
+          console.log('[MODAL] Webhook call successful.');
+        } else {
+          console.error(`[MODAL] Webhook call failed with status: ${response.status}`);
+        }
+      }).catch(error => {
+        console.error('[MODAL] Error sending data to webhook:', error);
+      });
+    } else {
+      console.warn('[MODAL] Webhook URL not configured (NEXT_PUBLIC_CHECKOUT_WEBHOOK_URL). Skipping.');
+    }
+
     console.log('[MODAL] Redirecting to checkout URL:', finalCheckoutUrl);
     console.log('[AB TEST] Using variant:', checkoutResult.variantId, 'Is test:', checkoutResult.isTest);
     
