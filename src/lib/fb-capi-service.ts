@@ -6,6 +6,34 @@ export const FACEBOOK_PIXEL_ID = '3069810703343613';
 const DEFAULT_CURRENCY = 'BRL';
 const DEBUG_MODE = process.env.NODE_ENV === 'development';
 
+// Top-level execution to capture and persist initial URL parameters for the session.
+if (typeof window !== 'undefined') {
+  const currentUrlParams = new URLSearchParams(window.location.search);
+
+  // If fbclid is present in the current URL, it signifies a new ad click session.
+  // We should clear any old stored params and start fresh with the new ones.
+  if (currentUrlParams.has('fbclid')) {
+    const paramsToStore: Record<string, string> = {};
+    currentUrlParams.forEach((value, key) => {
+      paramsToStore[key] = value;
+    });
+    sessionStorage.setItem('fb_initial_url_params', JSON.stringify(paramsToStore));
+  } else {
+    // If no new fbclid, we check if there are other params in the URL
+    // and add them to storage only if they aren't already there.
+    // This preserves the important original fbclid/UTMs for the session.
+    if (currentUrlParams.toString()) {
+        const storedParams: Record<string, string> = JSON.parse(sessionStorage.getItem('fb_initial_url_params') || '{}');
+        currentUrlParams.forEach((value, key) => {
+            if (!(key in storedParams)) {
+                storedParams[key] = value;
+            }
+        });
+        sessionStorage.setItem('fb_initial_url_params', JSON.stringify(storedParams));
+    }
+  }
+}
+
 // --- Utility Functions ---
 export function getCookie(name: string): string | undefined {
   if (typeof document === 'undefined') return undefined;
@@ -45,12 +73,21 @@ export function getExternalId(): string {
 
 export function getUrlParameters(): Record<string, string> {
   if (typeof window === 'undefined') return {};
-  const params: Record<string, string> = {};
+
+  // Get params saved at the start of the session
+  const storedParams = JSON.parse(sessionStorage.getItem('fb_initial_url_params') || '{}');
+  
+  // Get any params from the current URL
+  const currentParams: Record<string, string> = {};
   const urlParams = new URLSearchParams(window.location.search);
-  for (const [key, value] of urlParams) {
-    params[key] = value;
-  }
-  return params;
+  urlParams.forEach((value, key) => {
+    currentParams[key] = value;
+  });
+
+  // The final set of parameters is the stored ones, updated with any from the current URL.
+  // This ensures the original fbclid is preserved throughout the session but can be
+  // updated by new parameters if they appear.
+  return { ...storedParams, ...currentParams };
 }
 
 function getFbclidFromUrl(): string | undefined {

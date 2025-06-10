@@ -169,16 +169,12 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       region: 'br'
     });
 
-    // Get current page UTMs and append them
-    const currentPageParams = getUrlParameters();
-    for (const key in currentPageParams) {
-      if (key.startsWith('utm_')) {
-        kiwifyParams.append(key, currentPageParams[key]);
-      }
-    }
-    // Also append fbclid if present, as some platforms might use it as a general click ID
-    if (currentPageParams.fbclid) {
-        kiwifyParams.append('fbclid', currentPageParams.fbclid);
+    // Get all stored and current URL parameters from our robust function
+    const allTrackableParams = getUrlParameters(); 
+
+    // Append all captured parameters (UTMs, fbclid, gclid, etc.) to the checkout URL
+    for (const key in allTrackableParams) {
+      kiwifyParams.append(key, allTrackableParams[key]);
     }
     
     // Usar URL do A/B test em vez da URL fixa
